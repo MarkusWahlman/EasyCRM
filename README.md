@@ -1,8 +1,8 @@
 # EasyCRM
 
-EasyCRM on yrityksille suunnattu yksinkertainen asiakashallintajärjestelmä (CRM). Yrityskäyttäjä voi luoda hallintapaneeliin yrityksiä, joilla on monia kontakteja, hallinnoida niiden tietoja sekä luoda uusia käyttäjiä, joilla on oikeus joko muokata tai katsella käyttäjän yrityksiä.
+EasyCRM on yrityksille suunnattu yksinkertainen asiakashallintajärjestelmä (CRM). Yrityskäyttäjä voi luoda hallintapaneelista yrityksiä, joilla voi olla useita kontakteja. Yrityskäyttäjä voi myös hallinnoida yritysten tietoja sekä luoda uusia käyttäjiä, joilla on oikeus joko muokata tai tarkastella yrityksiä.
 
-### Sovelluksen ominaisuudet
+### Sovelluksen tavoitteet
 
 - **Yrityskäyttäjän luominen**  
   Kuka tahansa voi rekisteröityä sovellukseen yrityskäyttäjäksi.
