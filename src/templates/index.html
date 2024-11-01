@@ -1,1 +1,8 @@
-<p>TEST</p>
+{% if session.username %}
+<p>Olet kirjautunut nimellä {{ session.username }}</p>
+<p>groupId {{ session.groupId }}</p>
+<p>role {{ session.role }}</p>
+<a href="/logout">Kirjaudu ulos</a>
+{% else %}
+{% include 'login.html' %}
+{% endif %}
