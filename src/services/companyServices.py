@@ -78,7 +78,7 @@ def getCompany(id):
         company[7],
     )
 
-def getAllCompanies(groupId):
+def getAllGroupCompanies(groupId):
     getCompaniesSql = text("SELECT * FROM companies WHERE groupId=:groupId")
     getCompaniesResult = db.session.execute(getCompaniesSql, {"groupId": groupId})
     return [

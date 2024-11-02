@@ -4,7 +4,8 @@
     <li>
         <h3>Yrityksen nimi: {{ company.companyName }}</h3>
         <p>Y-tunnus: {{ company.businessId }}</p>
-        <a href="/company/edit/{{company.id}}">Päivitä yritystä</a>
+        <a href="/company/{{company.id}}">Tarkastele yritystä</a> <a href="/company/edit/{{company.id}}">Päivitä
+            yritystä</a>
     </li>
     {% endfor %}
 </ul>

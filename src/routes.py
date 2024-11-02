@@ -2,7 +2,7 @@ from app import app
 from flask import redirect, render_template, session
 
 from controllers.authControllers import loginController, registerController
-from controllers.companyControllers import companiesController, editCompanyController
+from controllers.companyControllers import companiesController, companyController, editCompanyController
 from middlware.authMiddlewares import checkSessionAccessToCompanyIdArg, checkSessionBelongsToGroup
 
 @app.route("/")
@@ -32,6 +32,11 @@ def editCompany(id=None):
 @checkSessionBelongsToGroup()
 def companies():
     return companiesController()
+
+@app.route("/company/<int:id>", methods=["GET"])
+@checkSessionAccessToCompanyIdArg()
+def company(id):
+    return companyController(id)
 
 # Custom error routes
 @app.errorhandler(404)

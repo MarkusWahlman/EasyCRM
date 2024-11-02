@@ -30,5 +30,14 @@ def editCompanyController(id):
     
 def companiesController():
     if request.method == "GET":
-        companies = companyServices.getAllCompanies(session.get("groupId"))
+        companies = companyServices.getAllGroupCompanies(session.get("groupId"))
         return render_template("companies.html", companies=companies)
+    
+def companyController(id):
+    if request.method == "GET":
+        company = companyServices.CompanyData()
+    if id:
+        company = companyServices.getCompany(id)
+        if not company:
+            return render_template("404.html")
+    return render_template("company.html", company=company)
