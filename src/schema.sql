@@ -14,8 +14,12 @@ CREATE TABLE userGroups (
 CREATE TABLE companies (
     id SERIAL PRIMARY KEY,
     companyName TEXT NOT NULL,
-    businessId TEXT,
-    /*UNIQUE?*/
+    businessId TEXT DEFAULT '',
+    notes TEXT DEFAULT '',
+    websiteUrl TEXT DEFAULT '',
+    email TEXT DEFAULT '',
+    phone TEXT DEFAULT '',
+    address TEXT DEFAULT '',
     groupId INT NOT NULL,
     FOREIGN KEY (groupId) REFERENCES groups(id) ON DELETE CASCADE
 );

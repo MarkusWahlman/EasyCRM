@@ -11,8 +11,7 @@ def renderEditCompanyTemplate(id, errorMessage=""):
             return render_template("404.html")
     return render_template("upsertcompany.html", 
                            id=id, 
-                           companyName=company.companyName, 
-                           businessId=company.businessId, 
+                           company=company,
                            errorMessage=errorMessage)
 
 def editCompanyController(id):
