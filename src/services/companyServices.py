@@ -31,3 +31,8 @@ def getCompany(id):
     if not company:
         return None
     return CompanyData(companyName=company[0], businessId=company[1])
+
+def getAllCompanies(groupId):
+    getCompaniesSql = text("SELECT * FROM companies WHERE groupId=:groupId")
+    getCompaniesResult = db.session.execute(getCompaniesSql, {"groupId": groupId})
+    return getCompaniesResult.fetchall()

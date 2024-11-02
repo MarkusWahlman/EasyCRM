@@ -6,14 +6,23 @@ from services.userServices import UserRoles
 
 from db import db
 
-def checkSessionAccessToCompanyIdArg():
+def checkSessionBelongsToGroup():
     def decorator(f):
         @wraps(f)
-        def decorated_function(*args, **kwargs):
+        def decoratedFunction(*args, **kwargs):
             groupId = session.get("groupId")
             if not groupId:
                 abort(403)
 
+            return f(*args, **kwargs)
+        return decoratedFunction
+    return decorator
+
+def checkSessionAccessToCompanyIdArg():
+    def decorator(f):
+        @wraps(f)
+        @checkSessionBelongsToGroup()
+        def decoratedFunction(*args, **kwargs):
             companyId = kwargs.get('id')
             if not companyId:
                 return f(*args, **kwargs)
@@ -29,9 +38,9 @@ def checkSessionAccessToCompanyIdArg():
                 abort(404)
             companyGroupId = companyGroupIdObject[0]
 
-            if groupId is not companyGroupId:
+            if session.get("groupId") is not companyGroupId:
                 abort(403)
 
             return f(*args, **kwargs)
-        return decorated_function
+        return decoratedFunction
     return decorator

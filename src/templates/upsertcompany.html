@@ -1,0 +1,13 @@
+<h1>{{'Päivitä yritystä' if id else 'Luo uusi yritys'}}</h1>
+
+<form action="/company{{ '/edit/' + (id | string) if id else '/create' }}" method="post">
+    <p>Yrityksen nimi:</p>
+    <input type="text" name="companyName" value="{{ companyName }}" required>
+    <p>Y-tunnus:</p>
+    <input type=" text" name="businessId" value="{{ businessId }}">
+    <br>
+    <input type="submit" value="{{'Päivitä' if id else 'Tallenna'}}">
+    <input type="hidden" name="id" value="{{ id }}">
+</form>
+
+{{ errorMessage | safe }}

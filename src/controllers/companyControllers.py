@@ -9,7 +9,7 @@ def renderEditCompanyTemplate(id, errorMessage=""):
         company = companyServices.getCompany(id)
         if not company:
             return render_template("404.html")
-    return render_template("editcompany.html", 
+    return render_template("upsertcompany.html", 
                            id=id, 
                            companyName=company.companyName, 
                            businessId=company.businessId, 
@@ -26,5 +26,10 @@ def editCompanyController(id):
             return renderEditCompanyTemplate(id, errorMessage=formatErrors(e.errors()))
 
         if companyServices.upsertCompany(formData, id):
-            return redirect("/")
+            return redirect("/companies")
         return renderEditCompanyTemplate(id, errorMessage="Yrityksen luomisessa tapahtui virhe")
+    
+def companiesController():
+    if request.method == "GET":
+        companies = companyServices.getAllCompanies(session.get("groupId"))
+        return render_template("companies.html", companies=companies)

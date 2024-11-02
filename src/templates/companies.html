@@ -1,0 +1,11 @@
+<h1>Companies</h1>
+<ul>
+    {% for company in companies %}
+    <li>
+        <h3>Yrityksen nimi: {{ company[1] }}</h3>
+        <p>Y-tunnus: {{ company[2] }}</p>
+        <a href="/company/edit/{{company[0]}}">Päivitä yritystä</a>
+    </li>
+    {% endfor %}
+</ul>
+<a href="/company/create">Luo uusi yritys</a>
