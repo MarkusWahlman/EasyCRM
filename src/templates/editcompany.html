@@ -1,6 +1,6 @@
-<form action="/editcompany{{ ('/' + id | string) if id is not none else '' }}" method="post">
-    <input type="text" name="companyName" required>
-    <input type="text" name="businessId">
+<form action="/editcompany{{ '/' + (id | string) if id else '' }}" method="post">
+    <input type="text" name="companyName" value="{{ companyName }}" required>
+    <input type=" text" name="businessId" value="{{ businessId }}">
 
     <input type="submit" value="Test">
     <input type="hidden" name="id" value="{{ id }}">

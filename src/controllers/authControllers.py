@@ -26,8 +26,8 @@ def registerController():
         try:
             formData = RegisterForm(**request.form.to_dict())
         except ValidationError as e:
-            return render_template("register.html", message=formatErrors(e.errors()))
+            return render_template("register.html", errorMessage=formatErrors(e.errors()))
 
         if userServices.register(formData.username, formData.password):
             return redirect("/")
-        return render_template("error.html", "Rekisteröinnissä tapahtui virhe")
+        return render_template("register.html", "Rekisteröinnissä tapahtui virhe")

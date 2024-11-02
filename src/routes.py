@@ -3,6 +3,7 @@ from flask import redirect, render_template, session
 
 from controllers.authControllers import loginController, registerController
 from controllers.companyControllers import editCompanyController
+from middlware.authMiddlewares import checkSessionAccessToCompanyIdArg
 
 @app.route("/")
 def index():
@@ -23,5 +24,11 @@ def logout():
 # Company routes
 @app.route("/editcompany", methods=["GET", "POST"])
 @app.route("/editcompany/<int:id>", methods=["GET", "POST"])
+@checkSessionAccessToCompanyIdArg()
 def editCompany(id=None):
     return editCompanyController(id)
+
+# Custom error routes
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404

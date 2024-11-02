@@ -15,6 +15,7 @@ CREATE TABLE companies (
     id SERIAL PRIMARY KEY,
     companyName TEXT NOT NULL,
     businessId TEXT,
+    /*UNIQUE?*/
     groupId INT NOT NULL,
     FOREIGN KEY (groupId) REFERENCES groups(id) ON DELETE CASCADE
 );
