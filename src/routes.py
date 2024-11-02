@@ -1,62 +1,27 @@
-from pydantic import ValidationError
 from app import app
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, session
 
-import users
-import companies
-from validators import CompanyForm, LoginForm, RegisterForm, formatErrors
+from controllers.authControllers import loginController, registerController
+from controllers.companyControllers import editCompanyController
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
+# Authentication routes
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == "GET":
-        return render_template("login.html")
-
-    if request.method == "POST":
-        try:
-            formData = LoginForm(**request.form.to_dict())
-        except ValidationError as e:
-            return render_template("login.html", errorMessage=formatErrors(e.errors()))
-        
-        if users.login(formData.username, formData.password):
-            return redirect("/")
-        return render_template("login.html", errorMessage="Väärä tunnus tai salasana")
-
+    return loginController()
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if request.method == "GET":
-        return render_template("register.html")
-
-    if request.method == "POST":
-        try:
-            formData = RegisterForm(**request.form.to_dict())
-        except ValidationError as e:
-            return render_template("register.html", message=formatErrors(e.errors()))
-
-        if users.register(formData.username, formData.password):
-            return redirect("/")
-        return render_template("error.html", "Rekisteröinnissä tapahtui virhe")
-
+   return registerController()
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
+# Company routes
 @app.route("/editcompany", methods=["GET", "POST"])
 @app.route("/editcompany/<int:id>", methods=["GET", "POST"])
-def editcompany(id=None):
-    if request.method == "GET":
-        return render_template("editcompany.html", id=id)
-
-    if request.method == "POST":
-        try:
-            formData = CompanyForm(**request.form.to_dict())
-        except ValidationError as e:
-            return render_template("editcompany.html", errorMessage=formatErrors(e.errors()))
-
-        if companies.upsertCompany(formData, id):
-            return redirect("/")
-        return render_template("error.html", message="Yrityksen luomisessa tapahtui virhe")
+def editCompany(id=None):
+    return editCompanyController(id)
