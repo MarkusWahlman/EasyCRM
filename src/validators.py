@@ -1,6 +1,7 @@
+import sys
 from typing import Optional
 from typing_extensions import Annotated
-from pydantic import BaseModel, StringConstraints, field_validator
+from pydantic import BaseModel, Field, StringConstraints, field_validator
 import re
 
 def formatErrors(error_list):
@@ -25,6 +26,7 @@ class RegisterForm(BaseModel):
         return password
     
 class CompanyForm(BaseModel):
+    id: Annotated[int, Field(ge=0, le=sys.maxsize)]
     companyName: Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=30)]
     businessId: Optional[Annotated[str, StringConstraints(min_length=8, max_length=9)]]
     notes: Optional[Annotated[str, StringConstraints(max_length=500)]]

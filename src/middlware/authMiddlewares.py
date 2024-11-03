@@ -6,7 +6,7 @@ from services.userServices import UserRoles
 
 from db import db
 
-def checkSessionBelongsToGroup():
+def checkBelongsToGroup():
     def decorator(f):
         @wraps(f)
         def decoratedFunction(*args, **kwargs):
@@ -18,12 +18,12 @@ def checkSessionBelongsToGroup():
         return decoratedFunction
     return decorator
 
-def checkSessionAccessToCompanyIdArg():
+def checkAccessToCompanyIdArg():
     def decorator(f):
         @wraps(f)
-        @checkSessionBelongsToGroup()
+        @checkBelongsToGroup()
         def decoratedFunction(*args, **kwargs):
-            companyId = kwargs.get('id')
+            companyId = kwargs.get('companyId')
             if not companyId:
                 return f(*args, **kwargs)
 
@@ -39,6 +39,35 @@ def checkSessionAccessToCompanyIdArg():
             companyGroupId = companyGroupIdObject[0]
 
             if session.get("groupId") is not companyGroupId:
+                abort(403)
+
+            return f(*args, **kwargs)
+        return decoratedFunction
+    return decorator
+
+
+def checkAccessToCompanyAndContactIdArg():
+    def decorator(f):
+        @wraps(f)
+        @checkAccessToCompanyIdArg()
+        def decoratedFunction(*args, **kwargs):
+            companyId = kwargs.get('companyId')
+            contactId = kwargs.get('contactId')
+            if not contactId:
+                return f(*args, **kwargs)
+
+            role = session.get("role")
+            if not role or UserRoles(role) is not UserRoles.OWNER and UserRoles(role) is not UserRoles.ADMIN:
+                abort(403)
+
+            getContactSql = text("SELECT companyId FROM contacts WHERE id=:contactId")
+            getContactResult = db.session.execute(getContactSql, {"contactId":contactId})
+            contactCompanyIdObject = getContactResult.fetchone()
+            if not contactCompanyIdObject:
+                abort(404)
+            contactCompanyId = contactCompanyIdObject[0]
+
+            if contactCompanyId is not companyId:
                 abort(403)
 
             return f(*args, **kwargs)

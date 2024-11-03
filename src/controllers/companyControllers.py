@@ -14,7 +14,7 @@ def renderEditCompanyTemplate(id, errorMessage=""):
                            company=company,
                            errorMessage=errorMessage)
 
-def editCompanyController(id):
+def upsertCompanyController(id):
     if request.method == "GET":
         return renderEditCompanyTemplate(id)
 
@@ -23,9 +23,9 @@ def editCompanyController(id):
             formData = CompanyForm(**request.form.to_dict())
         except ValidationError as e:
             return renderEditCompanyTemplate(id, errorMessage=formatErrors(e.errors()))
-
+        
         if companyServices.upsertCompany(formData, id):
-            return redirect("/companies")
+            return redirect(f"/company/{formData.id}")
         return renderEditCompanyTemplate(id, errorMessage="Yrityksen luomisessa tapahtui virhe")
     
 def companiesController():
@@ -36,8 +36,12 @@ def companiesController():
 def companyController(id):
     if request.method == "GET":
         company = companyServices.CompanyData()
-    if id:
-        company = companyServices.getCompany(id)
-        if not company:
-            return render_template("404.html")
-    return render_template("company.html", company=company)
+        if id:
+            company = companyServices.getCompany(id)
+            if not company:
+                return render_template("404.html")
+        return render_template("company.html", company=company)
+    
+def upsertCompanyContactController(companyId, contactId):
+    if request.method == "GET":
+        return render_template("upsertcontact.html")

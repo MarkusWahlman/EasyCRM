@@ -94,3 +94,6 @@ def getAllGroupCompanies(groupId):
         )
         for company in getCompaniesResult.fetchall()
     ]
+
+def getCompanyContacts(id):
+    return

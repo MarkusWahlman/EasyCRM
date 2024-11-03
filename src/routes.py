@@ -2,8 +2,8 @@ from app import app
 from flask import redirect, render_template, session
 
 from controllers.authControllers import loginController, registerController
-from controllers.companyControllers import companiesController, companyController, editCompanyController
-from middlware.authMiddlewares import checkSessionAccessToCompanyIdArg, checkSessionBelongsToGroup
+from controllers.companyControllers import companiesController, companyController, upsertCompanyContactController, upsertCompanyController
+from middlware.authMiddlewares import checkAccessToCompanyIdArg, checkAccessToCompanyAndContactIdArg, checkBelongsToGroup
 
 @app.route("/")
 def index():
@@ -23,20 +23,26 @@ def logout():
 
 # Company routes
 @app.route("/company/create", methods=["GET", "POST"])
-@app.route("/company/edit/<int:id>", methods=["GET", "POST"])
-@checkSessionAccessToCompanyIdArg()
-def editCompany(id=None):
-    return editCompanyController(id)
+@app.route("/company/edit/<int:companyId>", methods=["GET", "POST"])
+@checkAccessToCompanyIdArg()
+def upsertCompany(companyId=None):
+    return upsertCompanyController(companyId)
 
 @app.route("/companies", methods=["GET"])
-@checkSessionBelongsToGroup()
+@checkBelongsToGroup()
 def companies():
     return companiesController()
 
-@app.route("/company/<int:id>", methods=["GET"])
-@checkSessionAccessToCompanyIdArg()
-def company(id):
-    return companyController(id)
+@app.route("/company/<int:companyId>", methods=["GET"])
+@checkAccessToCompanyIdArg()
+def company(companyId):
+    return companyController(companyId)
+
+@app.route("/company/<int:companyId>/contact", methods=["GET"])
+@app.route("/company/<int:companyId>/contact/<int:contactId>", methods=["GET"])
+@checkAccessToCompanyAndContactIdArg()
+def upsertCompanyContact(companyId, contactId=None):
+    return upsertCompanyContactController(companyId, contactId)
 
 # Custom error routes
 @app.errorhandler(404)
