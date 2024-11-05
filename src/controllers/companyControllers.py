@@ -15,26 +15,28 @@ def renderEditCompanyTemplate(id, errorMessage=""):
                            company=company,
                            errorMessage=errorMessage)
 
-def upsertCompanyController(id):
-    if request.method == "GET":
-        return renderEditCompanyTemplate(id)
+def getUpsertCompanyController(id):
+    return renderEditCompanyTemplate(id)
 
-    if request.method == "POST":
-        try:
-            formData = CompanyForm(**request.form.to_dict())
-        except ValidationError as e:
-            return renderEditCompanyTemplate(id, errorMessage=formatErrors(e.errors()))
-        
-        if companyServices.upsertCompany(formData, id):
-            return redirect(f"/company/{formData.id}")
-        return renderEditCompanyTemplate(id, errorMessage="Yrityksen luomisessa tapahtui virhe")
+def postUpsertCompanyController(id):
+    try:
+        formData = CompanyForm(**request.form.to_dict())
+    except ValidationError as e:
+        return renderEditCompanyTemplate(id, errorMessage=formatErrors(e.errors()))
     
-def companiesController(groupId):
+    if companyServices.upsertCompany(formData, id):
+        returnPath =  f"/company/{id}"
+        if not id:
+            returnPath = f"/companies"
+        return redirect(returnPath)
+    return renderEditCompanyTemplate(id, errorMessage="Yrityksen luomisessa tapahtui virhe")
+    
+def getCompaniesController(groupId):
     if request.method == "GET":
         companies = companyServices.getAllGroupCompanies(groupId)
         return render_template("companies.html", companies=companies)
     
-def companyController(id):
+def getCompanyController(id):
     if request.method == "GET":
         company = companyServices.CompanyData()
         if id:
@@ -56,29 +58,31 @@ def renderCompanyContactTemplate(companyId, contactId, errorMessage=""):
                            contact=contact,
                            errorMessage=errorMessage)
 
-def upsertCompanyContactController(companyId, contactId):
-    if request.method == "GET":
-        return renderCompanyContactTemplate(companyId, contactId)
-    if request.method == "POST":
-        try:
-            formData = CompanyContactForm(**request.form.to_dict())
-        except ValidationError as e:
-            return renderCompanyContactTemplate(companyId, contactId, errorMessage=formatErrors(e.errors()))
-        
-        if companyServices.upsertCompanyContact(formData, companyId, contactId):
-            return redirect(f"/company/{companyId}/contact/{formData.id}")
-        return renderCompanyContactTemplate(companyId, contactId, errorMessage="Kontaktin luomisessa tapahtui virhe")
+def getUpsertCompanyContactController(companyId, contactId):
+    return renderCompanyContactTemplate(companyId, contactId)
     
-def contactController(companyId, contactId):
-    if request.method == "GET":
-        contact = companyServices.CompanyContactData()
-        if contactId and companyId:
-            contact = companyServices.getCompanyContact(companyId, contactId)
-            if not contact:
-                return render_template("404.html")
-        return render_template("contact.html", contact=contact)
+def postUpsertCompanyContactController(companyId, contactId):
+    try:
+        formData = CompanyContactForm(**request.form.to_dict())
+    except ValidationError as e:
+        return renderCompanyContactTemplate(companyId, contactId, errorMessage=formatErrors(e.errors()))
     
-def contactsController(companyId):
+    if companyServices.upsertCompanyContact(formData, companyId, contactId):
+        returnPath =  f"/company/{companyId}"
+        if contactId:
+            returnPath += f"/contact/{contactId}"
+        return redirect(returnPath)
+    return renderCompanyContactTemplate(companyId, contactId, errorMessage="Kontaktin luomisessa tapahtui virhe")
+
+def getCompanyContactController(companyId, contactId):
+    contact = companyServices.CompanyContactData()
+    if contactId and companyId:
+        contact = companyServices.getCompanyContact(companyId, contactId)
+        if not contact:
+            return render_template("404.html")
+    return render_template("contact.html", contact=contact)
+    
+def getCompanyContactsController(companyId):
     if request.method == "GET":
         contacts = companyServices.getAllCompanyContacts(companyId)
         return render_template("contacts.html", contacts=contacts)

@@ -82,7 +82,7 @@ def getCompany(id):
     if not company:
         return None
     return CompanyData(
-        None, 
+        company[0], 
         company[1], 
         company[2],
         company[3],
@@ -149,7 +149,7 @@ def getCompanyContact(companyId, contactId):
     if not contact:
         return None
     return CompanyData(
-        None, 
+        contact[0], 
         contact[1], 
         contact[2],
         contact[3],

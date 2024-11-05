@@ -17,7 +17,6 @@
     <input type="text" name="address" value="{{ company.address }}">
     <br>
     <input type="submit" value="{{'Päivitä' if id else 'Tallenna'}}">
-    <input type="hidden" name="id" value="{{ id if id else -1 }}">
 </form>
 
 {{ errorMessage | safe }}

@@ -18,6 +18,19 @@ def checkBelongsToGroup():
         return decoratedFunction
     return decorator
 
+def checkEditAccess():
+    def decorator(f):
+        @wraps(f)
+        @checkBelongsToGroup()
+        def decoratedFunction(*args, **kwargs):
+            role = session.get("role")
+            if not role or UserRoles(role) is not UserRoles.OWNER and UserRoles(role) is not UserRoles.ADMIN:
+                abort(403)
+            return f(*args, **kwargs)
+        return decoratedFunction
+    return decorator
+
+
 def checkAccessToCompanyIdArg():
     def decorator(f):
         @wraps(f)
@@ -26,10 +39,6 @@ def checkAccessToCompanyIdArg():
             companyId = kwargs.get('companyId')
             if not companyId:
                 return f(*args, **kwargs)
-
-            role = session.get("role")
-            if not role or UserRoles(role) is not UserRoles.OWNER and UserRoles(role) is not UserRoles.ADMIN:
-                abort(403)
 
             getCompanySql = text("SELECT groupId FROM companies WHERE id=:companyId")
             getCompanyResult = db.session.execute(getCompanySql, {"companyId":companyId})
