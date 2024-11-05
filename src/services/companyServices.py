@@ -1,5 +1,5 @@
 from db import db
-from flask import session
+from flask import abort, render_template, session
 from sqlalchemy.sql import text
 
 class CompanyData:
@@ -36,13 +36,34 @@ class CompanyContactData:
     email: str
     phone: str
 
-def upsertCompany(company: CompanyData, updateId=None):
+def renderUpsertCompanyTemplate(id, errorMessage=""):
+    company = CompanyData()
+    if id:
+        company = getCompany(id)
+    return render_template("upsertcompany.html", 
+                           id=id, 
+                           company=company,
+                           errorMessage=errorMessage)
+
+def renderCompanyContactTemplate(companyId, contactId, errorMessage=""):
+    contact = CompanyContactData()
+    if companyId and contactId:
+        contact = getCompanyContact(companyId, contactId)
+        if not contact:
+            return render_template("404.html")
+    return render_template("upsertcontact.html", 
+                           companyId=companyId,
+                           contactId=contactId,
+                           contact=contact,
+                           errorMessage=errorMessage)
+
+def upsertCompany(company: CompanyData, companyId=None):
     try:
-        if not updateId:
+        if not companyId:
             createCompanySql = text(
                 "INSERT INTO companies (companyName, businessId, notes, websiteUrl, email, phone, address, groupId) "
-                "VALUES (:companyName, :businessId, :notes, :websiteUrl, :email, :phone, :address, :groupId)")
-            db.session.execute(createCompanySql, {
+                "VALUES (:companyName, :businessId, :notes, :websiteUrl, :email, :phone, :address, :groupId) RETURNING id")
+            createCompanyResult = db.session.execute(createCompanySql, {
                 "companyName": company.companyName, 
                 "businessId": company.businessId, 
                 "notes": company.notes, 
@@ -52,6 +73,7 @@ def upsertCompany(company: CompanyData, updateId=None):
                 "address": company.address, 
                 "groupId": session["groupId"]
             })
+            companyId = createCompanyResult.fetchone()[0]
         else:
             updateCompanySql = text(
                 "UPDATE companies SET companyName = :companyName, businessId = :businessId, notes = :notes, "
@@ -67,19 +89,20 @@ def upsertCompany(company: CompanyData, updateId=None):
                 "phone": company.phone,
                 "address": company.address,
                 "groupId": session["groupId"],
-                "id": updateId
+                "id": companyId
             })
         
         db.session.commit()
-        return True
+        return companyId
     except:
-        return False
+        return None
     
 def getCompany(id):
     getCompanySql = text("SELECT * FROM companies WHERE id=:id")
     getCompanyResult = db.session.execute(getCompanySql, {"id": id})
     company = getCompanyResult.fetchone()
     if not company:
+        abort(404)
         return None
     return CompanyData(
         company[0], 
@@ -114,14 +137,15 @@ def upsertCompanyContact(contact: CompanyContactData, companyId, contactId):
         if not contactId:
             createContactSql = text(
                 "INSERT INTO contacts (firstName, lastName, email, phone, companyId) "
-                "VALUES (:firstName, :lastName, :email, :phone, :companyId)")
-            db.session.execute(createContactSql, {
+                "VALUES (:firstName, :lastName, :email, :phone, :companyId) RETURNING id")
+            createContactResult = db.session.execute(createContactSql, {
                 "firstName": contact.firstName, 
                 "lastName": contact.lastName, 
                 "email": contact.email, 
                 "phone": contact.phone,
                 "companyId": companyId
             })
+            contactId = createContactResult.fetchone()[0]
         else:
             updateContactSql = text(
                 "UPDATE contacts SET firstName = :firstName, lastName = :lastName, email = :email, "
@@ -138,15 +162,16 @@ def upsertCompanyContact(contact: CompanyContactData, companyId, contactId):
             })
     
         db.session.commit()
-        return True
+        return contactId
     except:
-        return False
+        return None
 
 def getCompanyContact(companyId, contactId):
     getContactSql = text("SELECT * FROM contacts WHERE companyId=:companyId AND id=:contactId")
     getContactResult = db.session.execute(getContactSql, {"companyId": companyId, "contactId": contactId})
     contact = getContactResult.fetchone()
     if not contact:
+        abort(404)
         return None
     return CompanyData(
         contact[0], 

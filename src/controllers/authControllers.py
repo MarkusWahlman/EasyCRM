@@ -4,10 +4,10 @@ from pydantic import ValidationError
 from validators import LoginForm, RegisterForm, formatErrors
 from services import userServices
 
-def getLoginController():
+def getLogin():
     return render_template("login.html")
 
-def postLoginController():
+def postLogin():
     try:
         formData = LoginForm(**request.form.to_dict())
     except ValidationError as e:
@@ -17,10 +17,10 @@ def postLoginController():
         return redirect("/")
     return render_template("login.html", errorMessage="Väärä tunnus tai salasana")
 
-def getRegisterController():
+def getRegister():
     return render_template("register.html")
 
-def postRegisterController():
+def postRegister():
     try:
         formData = RegisterForm(**request.form.to_dict())
     except ValidationError as e:

@@ -1,9 +1,10 @@
 from app import app
 from flask import redirect, render_template, request, session
 
-from controllers.authControllers import getLoginController, postLoginController, getRegisterController, postRegisterController
-from controllers.companyControllers import getCompaniesController, getCompanyContactsController, getCompanyController, getCompanyContactController, contactsController, postUpsertCompanyContactController, postUpsertCompanyController, getUpsertCompanyContactController, getUpsertCompanyController
-from middlware.authMiddlewares import checkAccessToCompanyIdArg, checkAccessToCompanyAndContactIdArg, checkBelongsToGroup
+from middlware.authMiddlewares import checkAccessToCompanyIdArg, checkAccessToCompanyAndContactIdArg, checkBelongsToGroup, checkEditAccess
+
+from controllers import companyControllers
+from controllers import authControllers
 
 @app.route("/")
 def index():
@@ -13,16 +14,16 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return getLoginController()
+        return authControllers.getLogin()
     if request.method == "POST":
-        return postLoginController()
+        return authControllers.postLogin()
     
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
-        return getRegisterController()
+        return authControllers.getRegister()
     if request.method == "POST":
-        return postRegisterController()
+        return authControllers.postRegister()
     
 @app.route("/logout")
 def logout():
@@ -32,45 +33,47 @@ def logout():
 # Company routes
 @app.route("/company/create", methods=["GET", "POST"])
 @app.route("/company/edit/<int:companyId>", methods=["GET", "POST"])
+@checkEditAccess()
 @checkAccessToCompanyIdArg()
 def upsertCompany(companyId=None):
     if request.method == "GET":
-        return getUpsertCompanyController(companyId)
+        return companyControllers.getUpsertCompany(companyId)
     if request.method == "POST":
-        return postUpsertCompanyController(companyId)
+        return companyControllers.postUpsertCompany(companyId)
 
 @app.route("/companies", methods=["GET"])
 @checkBelongsToGroup()
 def companies():
     if request.method == "GET":
-        return getCompaniesController(session.get("groupId"))
+        return companyControllers.getCompanies(session.get("groupId"))
 
 @app.route("/company/<int:companyId>", methods=["GET"])
 @checkAccessToCompanyIdArg()
 def company(companyId):
     if request.method == "GET":
-        return getCompanyController(companyId)
+        return companyControllers.getCompany(companyId)
 
 @app.route("/company/<int:companyId>/contact/create", methods=["GET", "POST"])
 @app.route("/company/<int:companyId>/contact/edit/<int:contactId>", methods=["GET", "POST"])
+@checkEditAccess()
 @checkAccessToCompanyAndContactIdArg()
-def upsertCompanyContact(companyId, contactId=None):
+def getUpsertCompanyContact(companyId, contactId=None):
     if request.method == "GET":
-        return getUpsertCompanyContactController(companyId, contactId)
+        return companyControllers.getUpsertCompanyContact(companyId, contactId)
     if request.method == "POST":
-        return postUpsertCompanyContactController(companyId, contactId)
+        return companyControllers.postUpsertCompanyContact(companyId, contactId)
 
 @app.route("/company/<int:companyId>/contact/<int:contactId>", methods=["GET"])
 @checkAccessToCompanyAndContactIdArg()
 def contact(companyId, contactId):
     if request.method == "GET":
-        return getCompanyContactController(companyId, contactId)
+        return companyControllers.getCompanyContact(companyId, contactId)
 
 @app.route("/company/<int:companyId>/contacts", methods=["GET"])
 @checkAccessToCompanyIdArg()
 def contacts(companyId):
     if request.method == "GET":
-        return getCompanyContactsController(companyId)
+        return companyControllers.getCompanyContacts(companyId)
 
 # Custom error routes
 @app.errorhandler(404)
