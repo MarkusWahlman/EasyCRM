@@ -22,6 +22,20 @@ class CompanyData:
     phone: str
     address: str
 
+class CompanyContactData:
+    def __init__(self, id=None, firstName: str = "", lastName: str = "", email: str = "", phone: str = ""):
+            self.id = id
+            self.firstName = firstName
+            self.lastName = lastName
+            self.email = email
+            self.phone = phone
+
+    id: int
+    firstName: str
+    lastName: str
+    email: str
+    phone: str
+
 def upsertCompany(company: CompanyData, updateId=None):
     try:
         if not updateId:
@@ -75,7 +89,7 @@ def getCompany(id):
         company[4],
         company[5],
         company[6],
-        company[7],
+        company[7]
     )
 
 def getAllGroupCompanies(groupId):
@@ -90,10 +104,68 @@ def getAllGroupCompanies(groupId):
             company[4],
             company[5],
             company[6],
-            company[7],
+            company[7]
         )
         for company in getCompaniesResult.fetchall()
     ]
 
-def getCompanyContacts(id):
-    return
+def upsertCompanyContact(contact: CompanyContactData, companyId, contactId):
+    try:
+        if not contactId:
+            createContactSql = text(
+                "INSERT INTO contacts (firstName, lastName, email, phone, companyId) "
+                "VALUES (:firstName, :lastName, :email, :phone, :companyId)")
+            db.session.execute(createContactSql, {
+                "firstName": contact.firstName, 
+                "lastName": contact.lastName, 
+                "email": contact.email, 
+                "phone": contact.phone,
+                "companyId": companyId
+            })
+        else:
+            updateContactSql = text(
+                "UPDATE contacts SET firstName = :firstName, lastName = :lastName, email = :email, "
+                "phone = :phone"
+                "WHERE companyId = :companyId AND contactId = :contactId"
+            )
+            db.session.execute(updateContactSql, {
+                "firstName": contact.firstName,
+                "lastName": contact.lastName,
+                "email": contact.email,
+                "phone": contact.phone,
+                "contactId": contactId,
+                "companyId": companyId
+            })
+    
+        db.session.commit()
+        return True
+    except:
+        return False
+
+def getCompanyContact(companyId, contactId):
+    getContactSql = text("SELECT * FROM contacts WHERE companyId=:companyId AND id=:contactId")
+    getContactResult = db.session.execute(getContactSql, {"companyId": companyId, "contactId": contactId})
+    contact = getContactResult.fetchone()
+    if not contact:
+        return None
+    return CompanyData(
+        None, 
+        contact[1], 
+        contact[2],
+        contact[3],
+        contact[4]
+    )
+
+def getAllCompanyContacts(companyId):
+    getContactsSql = text("SELECT * FROM contacts WHERE companyId=:companyId")
+    getContactsResult = db.session.execute(getContactsSql, {"companyId": companyId})
+    return [
+        CompanyContactData(
+            contact[0],
+            contact[1],
+            contact[2],
+            contact[3],
+            contact[4]
+        )
+        for contact in getContactsResult.fetchall()
+    ]

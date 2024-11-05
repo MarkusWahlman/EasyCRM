@@ -30,4 +30,4 @@ def registerController():
 
         if userServices.register(formData.username, formData.password):
             return redirect("/")
-        return render_template("register.html", "Rekisteröinnissä tapahtui virhe")
+        return render_template("register.html", errorMessage="Rekisteröinnissä tapahtui virhe, kokeile toista käyttäjänimeä")

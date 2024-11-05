@@ -57,7 +57,7 @@ def checkAccessToCompanyAndContactIdArg():
                 return f(*args, **kwargs)
 
             role = session.get("role")
-            if not role or UserRoles(role) is not UserRoles.OWNER and UserRoles(role) is not UserRoles.ADMIN:
+            if not role or (UserRoles(role) is not UserRoles.OWNER and UserRoles(role) is not UserRoles.ADMIN):
                 abort(403)
 
             getContactSql = text("SELECT companyId FROM contacts WHERE id=:contactId")
