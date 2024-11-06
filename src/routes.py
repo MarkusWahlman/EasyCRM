@@ -4,7 +4,7 @@ from flask import redirect, render_template, request, session, url_for
 from middlware.authMiddlewares import checkAccessToCompanyIdArg, checkAccessToCompanyAndContactIdArg, checkBelongsToGroup, checkEditAccess
 
 from controllers import companyControllers
-from controllers import authControllers
+from controllers import userControllers
 
 @app.context_processor
 def utility_processor():
@@ -23,16 +23,16 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return authControllers.getLogin()
+        return userControllers.getLogin()
     if request.method == "POST":
-        return authControllers.postLogin()
+        return userControllers.postLogin()
     
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
-        return authControllers.getRegister()
+        return userControllers.getRegister()
     if request.method == "POST":
-        return authControllers.postRegister()
+        return userControllers.postRegister()
     
 @app.route("/logout")
 def logout():
@@ -55,6 +55,12 @@ def upsertCompany(companyId=None):
 def companies():
     if request.method == "GET":
         return companyControllers.getCompanies(session.get("groupId"))
+    
+@app.route("/contacts", methods=["GET"])
+@checkBelongsToGroup()
+def contacts():
+    if request.method == "GET":
+        return companyControllers.getContacts(session.get("groupId"))
 
 @app.route("/company/<int:companyId>", methods=["GET"])
 @checkAccessToCompanyIdArg()
@@ -74,15 +80,21 @@ def upsertCompanyContact(companyId, contactId=None):
 
 @app.route("/company/<int:companyId>/contact/<int:contactId>", methods=["GET"])
 @checkAccessToCompanyAndContactIdArg()
-def contact(companyId, contactId):
+def companyContact(companyId, contactId):
     if request.method == "GET":
         return companyControllers.getCompanyContact(companyId, contactId)
 
 @app.route("/company/<int:companyId>/contacts", methods=["GET"])
 @checkAccessToCompanyIdArg()
-def contacts(companyId):
+def companyContacts(companyId):
     if request.method == "GET":
         return companyControllers.getCompanyContacts(companyId)
+    
+@app.route("/usermanager", methods=["GET"])
+@checkBelongsToGroup()
+def userManager():
+    if request.method == "GET":
+        return userControllers.getUserManager()
 
 # Custom error routes
 @app.errorhandler(404)

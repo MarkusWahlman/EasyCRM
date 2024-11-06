@@ -23,6 +23,11 @@ def getCompanies(groupId):
         companies = companyServices.getAllGroupCompanies(groupId)
         return render_template("companies.html", companies=companies)
     
+def getContacts(groupId):
+    if request.method == "GET":
+        contacts = companyServices.getAllGroupContacts(groupId)
+        return render_template("contacts.html", contacts=contacts)
+    
 def getCompany(id):
     if request.method == "GET":
         company = companyServices.CompanyData()

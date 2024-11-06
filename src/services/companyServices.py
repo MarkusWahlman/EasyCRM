@@ -23,18 +23,22 @@ class CompanyData:
     address: str
 
 class CompanyContactData:
-    def __init__(self, id=None, firstName: str = "", lastName: str = "", email: str = "", phone: str = ""):
+    def __init__(self, id=None, firstName: str = "", lastName: str = "", email: str = "", phone: str = "", companyName: str = "", companyId: str = ""):
             self.id = id
             self.firstName = firstName
             self.lastName = lastName
             self.email = email
             self.phone = phone
+            self.companyName = companyName
+            self.companyId = companyId
 
     id: int
     firstName: str
     lastName: str
     email: str
     phone: str
+    companyName: str
+    companyId: str
 
 def renderUpsertCompanyTemplate(id, errorMessage=""):
     company = CompanyData()
@@ -177,7 +181,9 @@ def getCompanyContact(companyId, contactId):
         contact[1], 
         contact[2],
         contact[3],
-        contact[4]
+        contact[4],
+        "",
+        companyId
     )
 
 def getAllCompanyContacts(companyId):
@@ -190,6 +196,29 @@ def getAllCompanyContacts(companyId):
             contact[2],
             contact[3],
             contact[4]
+        )
+        for contact in getContactsResult.fetchall()
+    ]
+
+def getAllGroupContacts(groupId):
+    getContactsSql = text("""
+        SELECT contacts.*, companies.companyName, companies.id
+        FROM contacts
+        JOIN companies ON contacts.companyId = companies.id
+        JOIN groups ON companies.groupId = groups.id
+        WHERE groups.id = :groupId
+    """)
+    getContactsResult = db.session.execute(getContactsSql, {"groupId": groupId})
+    
+    return [
+        CompanyContactData(
+            contact[0],  # id
+            contact[1],  # firstName
+            contact[2],  # lastName
+            contact[3],  # email
+            contact[4],  # phone
+            contact[-2], # companyName
+            contact[-1]  # companyId
         )
         for contact in getContactsResult.fetchall()
     ]

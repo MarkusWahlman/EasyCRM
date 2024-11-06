@@ -1,0 +1,22 @@
+{% extends "index.html"%}
+{% block mainContent %}
+<h2>Kaikki kontaktit</h2>
+<ul class="list-group">
+    {% for contact in contacts %}
+    <li class="list-group-item">
+        <h3>{{ contact.firstName }} {{ contact.lastName }}</h3>
+        <p>Yritys: {{ contact.companyName }}</p>
+        <p><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></p>
+        <p><a href="tel:{{ contact.phone }}">{{ contact.phone }}</a></p>
+        <a href=" {{url_for('companyContact', companyId=contact.companyId, contactId=contact.id)}}"
+            class="btn btn-dark">Tarkastele kontaktia</a>
+        <a href="{{url_for('upsertCompanyContact', companyId=contact.companyId, contactId=contact.id)}}"
+            class="btn btn-dark">Päivitä kontaktia</a>
+    </li>
+    {% else %}
+    <p>Et ole vielä luonut yhtään kontaktia. Siirry tarkastelemaan yritystä jotta voit luoda sille kontakteja.</p>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+{% include 'reloadOnBack.html' %}

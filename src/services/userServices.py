@@ -30,22 +30,30 @@ def login(username, password):
     
     return False
 
-def register(username, password):
+def createUser(username, password, role: UserRoles = None, groupId=None):
     hash_value = generate_password_hash(password)
     try:
         createUserSql = text("INSERT INTO users (username, password) VALUES (:username, :password) RETURNING id")
         createUserResult = db.session.execute(createUserSql, {"username":username, "password":hash_value})
         userId = createUserResult.fetchone()[0]
-
-        createGroupSql = text("INSERT INTO groups DEFAULT VALUES RETURNING id")
-        createGroupResult = db.session.execute(createGroupSql)
-        groupId = createGroupResult.fetchone()[0]
         
+        if not groupId:
+            createGroupSql = text("INSERT INTO groups DEFAULT VALUES RETURNING id")
+            createGroupResult = db.session.execute(createGroupSql)
+            groupId = createGroupResult.fetchone()[0]
+        
+        if role is None:
+            role = UserRoles.OWNER
+
         insertUserGroupSql = text("INSERT INTO userGroups (userId, groupId, role) VALUES (:userId, :groupId, :role)")
-        db.session.execute(insertUserGroupSql, {"userId": userId, "groupId": groupId, "role": UserRoles.OWNER})
+        db.session.execute(insertUserGroupSql, {"userId": userId, "groupId": groupId, "role": role})
 
         db.session.commit()
     except:
         return False
-    return login(username, password)
 
+def register(username, password):
+    userCreated = createUser(username, password)
+    if userCreated:
+        return login(username, password)
+    return False

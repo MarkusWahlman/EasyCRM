@@ -1,11 +1,13 @@
 {% extends "index.html"%}
 
 {% block mainContent %}
-<h2>Tarkastele kontaktia</h2>
-{% set back_url = url_for('company', companyId=companyId)%}
+<h2>Kontaktin tiedot</h2>
 {% include 'backbutton.html'%}
 <p>{{contact.firstName}}</p>
 <p>{{contact.lastName}}</p>
 <p><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></p>
 <p><a href="tel:{{ contact.phone }}">{{ contact.phone }}</a></p>
+<a href="{{url_for('upsertCompanyContact', companyId=contact.companyId, contactId=contact.id)}}" class="btn btn-dark">
+    Päivitä kontaktia
+</a>
 {% endblock %}

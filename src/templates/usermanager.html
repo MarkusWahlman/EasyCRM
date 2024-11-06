@@ -1,0 +1,10 @@
+{% extends "index.html"%}
+{% block mainContent %}
+<h2>Ryhmän käyttäjien hallinta</h2>
+<a href="{{url_for('upsertCompany')}}" class="btn btn-dark mb-2 w-100">Luo uusi käyttäjä</a>
+
+<h2>Oman tilin hallinta</h2>
+<a href="{{url_for('upsertCompany')}}" class="btn btn-dark mb-2 w-100">Kirjaudu ulos</a>
+{% endblock %}
+
+{% include 'reloadOnBack.html' %}

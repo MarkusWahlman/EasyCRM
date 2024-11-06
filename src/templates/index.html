@@ -19,7 +19,10 @@
                 <nav class="nav nav-masthead justify-content-center">
                     {% if session.username %}
                     <a class="nav-link {{ is_active('companies') }}" href="{{url_for('companies')}}">Yritykset</a>
-                    <a class="nav-link" href="#">Käyttäjävalikko</a>
+                    <a class="nav-link {{ is_active('contacts') }}" href="{{url_for('contacts')}}">Kontaktit</a>
+                    <a class="nav-link {{ is_active('userManager') }}" href="{{url_for('userManager')}}">
+                        Käyttäjävalikko
+                    </a>
                     {% else %}
                     <a class="nav-link {{ is_active('login') }}" href="{{url_for('login')}}">Kirjaudu</a>
                     <a class="nav-link {{ is_active('register') }}" href="{{url_for('register')}}">Rekisteröidy</a>
@@ -35,7 +38,13 @@
                 <p>Tässä lyhyt video sovelluksen ominaisuuksista.</p>
                 <iframe width="420" height="315" src="https://www.youtube.com/embed/tgbNymZ7vqY">
                 </iframe>
-                <p>Ongelmatilanteissa voit olla yhteydessä <br> markus.wahlman@helsinki.fi</p>
+                <p>
+                    Ongelmatilanteissa voit olla yhteydessä
+                    <br>
+                    <a href="mailto:markus.wahlman@helsinki.fi">
+                        markus.wahlman@helsinki.fi
+                    </a>
+                </p>
             </div>
             {% endblock %}
         </main>

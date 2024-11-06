@@ -1,8 +1,7 @@
 {% extends "index.html"%}
 
 {% block mainContent %}
-<h2>Tarkastele yritystä</h2>
-{% set back_url = url_for('companies')%}
+<h2>Yrityksen tiedot</h2>
 {% include 'backbutton.html'%}
 <p>{{company.companyName}}</p>
 <p>{{company.businessId}}</p>
@@ -11,8 +10,9 @@
 <p><a href="mailto:{{ company.email }}">{{company.email}}</a></p>
 <p><a href="tel:{{ company.phone }}">{{company.phone}}</a></p>
 <p><a href="https://www.google.com/maps?q={{ company.address }}" target="_blank">{{company.address}}</a></p>
+<a href="{{url_for('upsertCompany', companyId=company.id)}}" class="btn btn-dark mb-2">Päivitä yritystä</a>
 
-<h1>Kontaktit</h1>
+<h2>Kontaktit</h2>
 <a href="{{url_for('upsertCompanyContact', companyId=company.id)}}" class="btn btn-dark mb-2 w-100">
     Luo uusi kontakti
 </a>
@@ -22,6 +22,8 @@
         <p>{{ contact.firstName }} {{ contact.lastName }}</p>
         <p><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></p>
         <p><a href="tel:{{ contact.phone }}">{{ contact.phone }}</a></p>
+        <a href=" {{url_for('companyContact', companyId=company.id, contactId=contact.id)}}"
+            class="btn btn-dark">Tarkastele kontaktia</a>
         <a href="{{url_for('upsertCompanyContact', companyId=company.id, contactId=contact.id)}}"
             class="btn btn-dark">Päivitä kontaktia</a>
     </li>
@@ -30,3 +32,5 @@
     {% endfor %}
 </ul>
 {% endblock %}
+
+{% include 'reloadOnBack.html' %}
