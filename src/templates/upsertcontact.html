@@ -1,16 +1,27 @@
-<h1>{{'Päivitä kontaktia' if contactId else 'Luo uusi kontakti'}}</h1>
+{% extends "index.html"%}
 
+{% block mainContent %}
+<h1>{{'Päivitä kontaktia' if contactId else 'Luo uusi kontakti'}}</h1>
+{% include 'backbutton.html' %}
 <form action="{{url_for('upsertCompanyContact', companyId=companyId, contactId=contactId)}}" method="post">
-    <p>Etunimi:</p>
-    <input type="text" name="firstName" value="{{ contact.firstName }}" required>
-    <p>Sukunimi:</p>
-    <input type=" text" name="lastName" value="{{ contact.lastName }}" maxlength="9">
-    <p>Email:</p>
-    <input type="text" name="email" value="{{ contact.email }}">
-    <p>Puhelinnumero:</p>
-    <input type="text" name="phone" value="{{ contact.phone }}">
-    <br>
-    <input type="submit" value="{{'Päivitä' if companyId else 'Tallenna'}}">
+    <div class="form-group">
+        <label>Etunimi:</label>
+        <input class="form-control" type="text" name="firstName" value="{{ contact.firstName }}" required>
+    </div>
+    <div class="form-group">
+        <label>Sukunimi:</label>
+        <input class="form-control" type=" text" name="lastName" value="{{ contact.lastName }}" maxlength="9">
+    </div>
+    <div class="form-group">
+        <label>Email:</label>
+        <input class="form-control" type="text" name="email" value="{{ contact.email }}">
+    </div>
+    <div class="form-group">
+        <label>Puhelinnumero:</label>
+        <input class="form-control" type="text" name="phone" value="{{ contact.phone }}">
+    </div>
+    <button class="btn btn-dark" type="submit">{{'Päivitä' if contactId else 'Tallenna'}}</button>
 </form>
 
 {{ errorMessage | safe }}
+{% endblock %}

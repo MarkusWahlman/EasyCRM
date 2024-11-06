@@ -1,0 +1,12 @@
+<button onclick="goBack()" class="btn btn-dark mb-2 w-100">Palaa takaisin</button>
+
+<script>
+    function goBack() {
+        const backUrl = "{{ back_url | default('') }}";
+        if (backUrl) {
+            window.location.href = backUrl;
+        } else {
+            window.history.back();
+        }
+    }
+</script>

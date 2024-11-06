@@ -55,9 +55,9 @@ def getCompanyContact(companyId, contactId):
         contact = companyServices.getCompanyContact(companyId, contactId)
         if not contact:
             abort(404)
-    return render_template("contact.html", contact=contact)
+    return render_template("companycontact.html", contact=contact, companyId=companyId)
     
 def getCompanyContacts(companyId):
     if request.method == "GET":
         contacts = companyServices.getAllCompanyContacts(companyId)
-        return render_template("contacts.html", contacts=contacts)
+        return render_template("companycontacts.html", contacts=contacts, companyId=companyId)

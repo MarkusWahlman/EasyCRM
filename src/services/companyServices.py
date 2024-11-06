@@ -148,19 +148,18 @@ def upsertCompanyContact(contact: CompanyContactData, companyId, contactId):
             contactId = createContactResult.fetchone()[0]
         else:
             updateContactSql = text(
-                "UPDATE contacts SET firstName = :firstName, lastName = :lastName, email = :email, "
-                "phone = :phone"
-                "WHERE companyId = :companyId AND contactId = :contactId"
+                "UPDATE contacts SET firstName = :firstName, lastName = :lastName, email = :email, phone = :phone "
+                "WHERE companyId = :companyId AND id = :contactId"
             )
             db.session.execute(updateContactSql, {
                 "firstName": contact.firstName,
                 "lastName": contact.lastName,
                 "email": contact.email,
                 "phone": contact.phone,
-                "contactId": contactId,
-                "companyId": companyId
+                "companyId": companyId,
+                "contactId": contactId
             })
-    
+
         db.session.commit()
         return contactId
     except:
