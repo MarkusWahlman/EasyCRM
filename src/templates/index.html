@@ -1,10 +1,41 @@
-{% if session.username %}
-<p>Olet kirjautunut nimellä {{ session.username }}</p>
-<p>groupId {{ session.groupId }}</p>
-<p>role {{ session.role }}</p>
-<a href="/companies">Tarkastele yrityksiä</a>
-<br>
-<a href="/logout">Kirjaudu ulos</a>
-{% else %}
-<a href="/login"> Kirjaudu sisään!</a>
-{% endif %}
+<!-- Page template from https://getbootstrap.com/docs/4.0/examples/cover/ -->
+
+<html>
+
+<head>
+    <title>EasyCRM</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+</head>
+
+<body class="">
+    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+        {% block content %}
+        <header class="masthead">
+            <div class="inner">
+                <a href="/">
+                    <h3 class="masthead-brand">EasyCRM</h3>
+                </a>
+                <nav class="nav nav-masthead justify-content-center">
+                    <a class="nav-link {{ is_active('companies') }}" href="{{url_for('companies')}}">Yritykset</a>
+                    <a class="nav-link" href="#">Käyttäjävalikko</a>
+                </nav>
+            </div>
+        </header>
+
+        <main role="main" class="inner cover">
+            {% block mainContent %}
+            <div class="text-center">
+                <h2>Hei {{session.username}}!</h2>
+                <p>Tässä lyhyt video sovelluksen ominaisuuksista.</p>
+                <iframe width="420" height="315" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+                </iframe>
+                <p>Ongelmatilanteissa voit olla yhteydessä <br> markus.wahlman@helsinki.fi</p>
+            </div>
+            {% endblock %}
+        </main>
+        {% endblock %}
+    </div>
+</body>
+
+</html>

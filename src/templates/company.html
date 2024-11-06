@@ -5,3 +5,14 @@
 <p>{{company.email}}</p>
 <p>{{company.phone}}</p>
 <p>{{company.address}}</p>
+
+<h1>Kontaktit</h1>
+<ul>
+    {% for contact in contacts %}
+    <li>
+        <p>Etunimi: {{ contact.firstName }}</p>
+        <p>Sukunimi: {{ contact.lastName }}</p>
+        <a href="{{url_for('upsertCompanyContact', companyId=company.id, contactId=contact.id)}}">Päivitä kontaktia</a>
+    </li>
+    {% endfor %}
+</ul>

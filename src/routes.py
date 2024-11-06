@@ -1,13 +1,22 @@
 from app import app
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, url_for
 
 from middlware.authMiddlewares import checkAccessToCompanyIdArg, checkAccessToCompanyAndContactIdArg, checkBelongsToGroup, checkEditAccess
 
 from controllers import companyControllers
 from controllers import authControllers
 
+@app.context_processor
+def utility_processor():
+    def is_active(endpoint):
+        return 'active' if request.path == url_for(endpoint) else ''
+    return dict(is_active=is_active)
+
 @app.route("/")
 def index():
+    if not session.get("username"):
+        print("NOTTTTTT")
+        return redirect("/login")
     return render_template("index.html")
 
 # Authentication routes
@@ -57,7 +66,7 @@ def company(companyId):
 @app.route("/company/<int:companyId>/contact/edit/<int:contactId>", methods=["GET", "POST"])
 @checkEditAccess()
 @checkAccessToCompanyAndContactIdArg()
-def getUpsertCompanyContact(companyId, contactId=None):
+def upsertCompanyContact(companyId, contactId=None):
     if request.method == "GET":
         return companyControllers.getUpsertCompanyContact(companyId, contactId)
     if request.method == "POST":

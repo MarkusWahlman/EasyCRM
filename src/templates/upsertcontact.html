@@ -1,6 +1,6 @@
 <h1>{{'Päivitä kontaktia' if contactId else 'Luo uusi kontakti'}}</h1>
 
-<form action="/company/{{ companyId }}/contact/{{ 'edit/' + (contactId | string) if id else 'create' }}" method="post">
+<form action="{{url_for('upsertCompanyContact', companyId=companyId, contactId=contactId)}}" method="post">
     <p>Etunimi:</p>
     <input type="text" name="firstName" value="{{ contact.firstName }}" required>
     <p>Sukunimi:</p>

@@ -1,11 +1,16 @@
-<form action="/login" method="post">
+{% extends "index.html"%}
+{% block content %}
+<header class="masthead">
+    <h2>Kirjautuminen</h2>
+</header>
+<form action="{{url_for('login')}}" method="post">
     Tunnus: <input type="text" name="username">
     <p>
         Salasana: <input type="password" name="password">
     <p>
         <input type="submit" value="Kirjaudu">
 </form>
-
 {{errorMessage | safe}}
 <br>
-Jos sinulla ei ole tunnusta, voit luoda uuden tunnuksen <a href="/register">tästä</a>
+Jos sinulla ei ole tunnusta, voit luoda uuden tunnuksen <a href="{{url_for('register')}}">tästä</a>
+{% endblock %}

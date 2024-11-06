@@ -173,7 +173,7 @@ def getCompanyContact(companyId, contactId):
     if not contact:
         abort(404)
         return None
-    return CompanyData(
+    return CompanyContactData(
         contact[0], 
         contact[1], 
         contact[2],

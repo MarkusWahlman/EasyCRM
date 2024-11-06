@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request, session
+from flask import abort, redirect, render_template, request, session
 from pydantic import ValidationError
 from services import companyServices
 from validators import CompanyContactForm, CompanyForm, formatErrors
@@ -28,9 +28,10 @@ def getCompany(id):
         company = companyServices.CompanyData()
         if id:
             company = companyServices.getCompany(id)
+            contacts = companyServices.getAllCompanyContacts(id)
             if not company:
                 return render_template("404.html")
-        return render_template("company.html", company=company)
+        return render_template("company.html", company=company, contacts=contacts)
     
 def getUpsertCompanyContact(companyId, contactId):
     return companyServices.renderCompanyContactTemplate(companyId, contactId)
@@ -46,14 +47,14 @@ def postUpsertCompanyContact(companyId, contactId):
         return companyServices.renderCompanyContactTemplate(companyId, 
                                                             contactId, 
                                                             errorMessage="Kontaktin luomisessa tapahtui virhe")
-    return redirect(f"/contact/{contactId}")
+    return redirect(f"/company/{companyId}/contact/{contactId}")
 
 def getCompanyContact(companyId, contactId):
     contact = companyServices.CompanyContactData()
     if contactId and companyId:
         contact = companyServices.getCompanyContact(companyId, contactId)
         if not contact:
-            return render_template("404.html")
+            abort(404)
     return render_template("contact.html", contact=contact)
     
 def getCompanyContacts(companyId):

@@ -1,12 +1,18 @@
-<h1>Companies</h1>
-<ul>
+{% extends "index.html"%}
+{% block mainContent %}
+<h2>Kaikki yritykset</h2>
+<ul class="list-group">
     {% for company in companies %}
-    <li>
-        <h3>Yrityksen nimi: {{ company.companyName }}</h3>
+    <li class="list-group-item">
+        <h3>{{ company.companyName }}</h3>
         <p>Y-tunnus: {{ company.businessId }}</p>
-        <a href="/company/{{company.id}}">Tarkastele yritystä</a> <a href="/company/edit/{{company.id}}">Päivitä
+        <a href="{{url_for('company', companyId=company.id)}}">Tarkastele yritystä</a> <a
+            href="{{url_for('upsertCompany', companyId=company.id)}}">Päivitä
             yritystä</a>
     </li>
+    {% else %}
+    <p>Et ole vielä luonut yhtään yritystä.</p>
     {% endfor %}
 </ul>
-<a href="/company/create">Luo uusi yritys</a>
+<a href="{{url_for('upsertCompany')}}">Luo uusi yritys</a>
+{% endblock %}
