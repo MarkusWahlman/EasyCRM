@@ -1,6 +1,6 @@
-from db import db
 from flask import abort, render_template, session
 from sqlalchemy.sql import text
+from db import db
 
 class CompanyData:
     def __init__(self, id = None, companyName: str = "", businessId: str = "", notes: str = "", websiteUrl : str="", email: str="", phone: str="", address: str=""):

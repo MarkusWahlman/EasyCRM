@@ -49,6 +49,7 @@ def createUser(username, password, role: UserRoles = None, groupId=None):
         db.session.execute(insertUserGroupSql, {"userId": userId, "groupId": groupId, "role": role})
 
         db.session.commit()
+        return True
     except:
         return False
 
