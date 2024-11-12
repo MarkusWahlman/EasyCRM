@@ -108,7 +108,7 @@ def registerRoutes(app):
         if request.method == "GET":
             return companyControllers.getCompany(companyId)
         return render_template('405.html'), 405
-    
+
     @app.route("/company/delete/<int:companyId>", methods=["POST"])
     @checkEditAccess()
     @checkAccessToCompanyIdArg()
@@ -150,7 +150,6 @@ def registerRoutes(app):
             return companyControllers.deleteContact(contactId)
         return render_template('405.html'), 405
 
-
     @app.route("/company/<int:companyId>/contacts", methods=["GET"])
     @checkAccessToCompanyIdArg()
     def companyContacts(companyId):
@@ -180,7 +179,7 @@ def registerRoutes(app):
         if request.method == "POST":
             return userControllers.postCreateUser(session.get("groupId"))
         return render_template('405.html'), 405
-    
+
     @app.route("/user/delete/<int:userId>", methods=["POST"])
     @checkAccessToUserIdArg()
     @checkOwnerAccess()
@@ -208,7 +207,7 @@ def registerRoutes(app):
         Handles 404 errors by rendering a custom 404 error page.
         """
         return render_template('404.html'), 404
-    
+
     @app.errorhandler(403)
     # pylint: disable=unused-argument
     def forbiddenAuth(*args, **kwargs):
@@ -216,7 +215,7 @@ def registerRoutes(app):
         Handles 403 errors by rendering a custom 403 error page.
         """
         return render_template('403.html'), 403
-    
+
     @app.errorhandler(405)
     # pylint: disable=unused-argument
     def methodNotAllowed(*args, **kwargs):
@@ -224,4 +223,3 @@ def registerRoutes(app):
         Handles 405 errors by rendering a custom 405 error page.
         """
         return render_template('405.html'), 405
-

@@ -119,7 +119,7 @@ def checkAccessToCompanyAndContactIdArg():
             groupId = session.get("groupId")
 
             role = userServices.getUserRole(userId, groupId)
-            
+
             if not role or (UserRoles(role) is not UserRoles.OWNER and UserRoles(
                     role) is not UserRoles.ADMIN):
                 abort(403)

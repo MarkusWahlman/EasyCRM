@@ -320,6 +320,7 @@ def getAllGroupContacts(groupId, searchString="", showOffset=0):
         for contact in getContactsResult.fetchall()
     ]
 
+
 def deleteCompany(companyId):
     """
     Delete a company by its unique identifier.
@@ -327,16 +328,17 @@ def deleteCompany(companyId):
     try:
         deleteCompanySql = text("DELETE FROM companies WHERE id=:id")
         deleteResult = db.session.execute(deleteCompanySql, {"id": companyId})
-        
+
         if deleteResult.rowcount == 0:
             abort(404)
             return False
-        
+
         db.session.commit()
         return True
     except SQLAlchemyError:
         db.session.rollback()
         return False
+
 
 def deleteContact(contactId):
     """
@@ -345,11 +347,11 @@ def deleteContact(contactId):
     try:
         deleteContactSql = text("DELETE FROM contacts WHERE id=:id")
         deleteResult = db.session.execute(deleteContactSql, {"id": contactId})
-        
+
         if deleteResult.rowcount == 0:
             abort(404)
             return False
-        
+
         db.session.commit()
         return True
     except SQLAlchemyError:

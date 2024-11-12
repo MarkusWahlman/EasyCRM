@@ -126,6 +126,7 @@ def postEditUser(groupId, userId):
         return redirect(url_for('userManager'))
     return getEditUser(userId, errorMessage="Käyttäjän muokkaamisessa tapahtui virhe")
 
+
 def deleteUser(userId):
     """
     Deletes a user with the given contactId and redirects the user to a relevant valid url

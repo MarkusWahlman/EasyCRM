@@ -179,12 +179,13 @@ def getUser(userId):
         username=user[1]
     )
 
+
 def deleteUser(userId):
     """
     Delete a user by its unique identifier
     """
     try:
-        #@todo ALSO DELETE USER FROM USERGROUPS!!!
+        # @todo ALSO DELETE USER FROM USERGROUPS!!!
         deleteUserSql = text("DELETE FROM users WHERE id = :id")
         deleteResult = db.session.execute(deleteUserSql, {"id": userId})
 
@@ -197,16 +198,19 @@ def deleteUser(userId):
     except SQLAlchemyError:
         db.session.rollback()
         return False
-    
+
+
 def getUserRole(userId, groupId):
     """
     Retrieve the role of a user in a specified group.
     """
     try:
-        getUserRoleSql = text("SELECT role FROM userGroups WHERE userId = :userId AND groupId = :groupId")
-        result = db.session.execute(getUserRoleSql, {"userId": userId, "groupId": groupId})
+        getUserRoleSql = text(
+            "SELECT role FROM userGroups WHERE userId = :userId AND groupId = :groupId")
+        result = db.session.execute(
+            getUserRoleSql, {"userId": userId, "groupId": groupId})
         role = result.fetchone()
-        
+
         if not role:
             abort(403)
             return None

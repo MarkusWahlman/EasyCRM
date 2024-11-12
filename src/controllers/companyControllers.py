@@ -47,7 +47,8 @@ def getCompanies(groupId):
             showOffset = 0
     except ValueError:
         showOffset = 0
-    companies = companyServices.getAllGroupCompanies(groupId, searchString, showOffset)
+    companies = companyServices.getAllGroupCompanies(
+        groupId, searchString, showOffset)
     return render_template("companies.html", companies=companies)
 
 
@@ -62,7 +63,8 @@ def getContacts(groupId):
             showOffset = 0
     except ValueError:
         showOffset = 0
-    contacts = companyServices.getAllGroupContacts(groupId, searchString, showOffset)
+    contacts = companyServices.getAllGroupContacts(
+        groupId, searchString, showOffset)
     return render_template("contacts.html", contacts=contacts)
 
 
@@ -138,6 +140,7 @@ def getCompanyContacts(companyId):
         contacts=contacts,
         companyId=companyId)
 
+
 def deleteCompany(companyId):
     """
     Deletes a company with the given companyId and redirects the user to a relevant valid url
@@ -148,6 +151,7 @@ def deleteCompany(companyId):
     if request.referrer and not invalidReferrer:
         return redirect(request.referrer)
     return redirect(url_for('companies'))
+
 
 def deleteContact(contactId):
     """
