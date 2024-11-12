@@ -7,6 +7,7 @@ from functools import wraps
 from flask import session, abort
 
 from sqlalchemy.sql import text
+from services import userServices
 from services.userServices import UserRoles
 
 from db import db
@@ -37,7 +38,10 @@ def checkEditAccess():
         @wraps(f)
         @checkBelongsToGroup()
         def decoratedFunction(*args, **kwargs):
-            role = session.get("role")
+            userId = session.get("userId")
+            groupId = session.get("groupId")
+
+            role = userServices.getUserRole(userId, groupId)
             if not role or UserRoles(role) is not UserRoles.OWNER and UserRoles(
                     role) is not UserRoles.ADMIN:
                 abort(403)
@@ -55,7 +59,10 @@ def checkOwnerAccess():
         @wraps(f)
         @checkBelongsToGroup()
         def decoratedFunction(*args, **kwargs):
-            role = session.get("role")
+            userId = session.get("userId")
+            groupId = session.get("groupId")
+
+            role = userServices.getUserRole(userId, groupId)
             if UserRoles(role) is not UserRoles.OWNER:
                 abort(403)
             return f(*args, **kwargs)
@@ -108,7 +115,11 @@ def checkAccessToCompanyAndContactIdArg():
             if not contactId:
                 return f(*args, **kwargs)
 
-            role = session.get("role")
+            userId = session.get("userId")
+            groupId = session.get("groupId")
+
+            role = userServices.getUserRole(userId, groupId)
+            
             if not role or (UserRoles(role) is not UserRoles.OWNER and UserRoles(
                     role) is not UserRoles.ADMIN):
                 abort(403)

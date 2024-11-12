@@ -208,3 +208,20 @@ def registerRoutes(app):
         Handles 404 errors by rendering a custom 404 error page.
         """
         return render_template('404.html'), 404
+    
+    @app.errorhandler(403)
+    # pylint: disable=unused-argument
+    def forbiddenAuth(*args, **kwargs):
+        """
+        Handles 403 errors by rendering a custom 403 error page.
+        """
+        return render_template('403.html'), 403
+    
+    @app.errorhandler(405)
+    # pylint: disable=unused-argument
+    def methodNotAllowed(*args, **kwargs):
+        """
+        Handles 405 errors by rendering a custom 405 error page.
+        """
+        return render_template('405.html'), 405
+

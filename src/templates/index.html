@@ -17,7 +17,7 @@
                     <h3 class="masthead-brand">EasyCRM</h3>
                 </a>
                 <nav class="nav nav-masthead justify-content-center">
-                    {% if session.username %}
+                    {% if session.userId %}
                     <a class="nav-link {{ isActive('companies') }}" href="{{url_for('companies')}}">Yritykset</a>
                     <a class="nav-link {{ isActive('contacts') }}" href="{{url_for('contacts')}}">Kontaktit</a>
                     <a class="nav-link {{ isActive('userManager') }}" href="{{url_for('userManager')}}">

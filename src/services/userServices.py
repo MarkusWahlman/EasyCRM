@@ -184,6 +184,7 @@ def deleteUser(userId):
     Delete a user by its unique identifier
     """
     try:
+        #@todo ALSO DELETE USER FROM USERGROUPS!!!
         deleteUserSql = text("DELETE FROM users WHERE id = :id")
         deleteResult = db.session.execute(deleteUserSql, {"id": userId})
 
@@ -207,7 +208,7 @@ def getUserRole(userId, groupId):
         role = result.fetchone()
         
         if not role:
-            abort(404)
+            abort(403)
             return None
 
         return role[0]
