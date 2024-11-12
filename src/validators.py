@@ -121,8 +121,7 @@ class CompanyForm(BaseModel):
 
     companyName: Annotated[str, StringConstraints(
         strip_whitespace=True, min_length=3, max_length=30)]
-    businessId: Optional[Annotated[str,
-                                   StringConstraints(min_length=8, max_length=9)]]
+    businessId: Annotated[str, StringConstraints(min_length=8, max_length=9)]
     notes: Optional[Annotated[str, StringConstraints(max_length=500)]]
     websiteUrl: Optional[Annotated[str, StringConstraints(max_length=75)]]
     email: Optional[Annotated[str, StringConstraints(max_length=75)]]

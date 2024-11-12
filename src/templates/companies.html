@@ -2,8 +2,16 @@
 {% block mainContent %}
 <h2>Kaikki yritykset</h2>
 <a href="{{url_for('upsertCompany')}}" class="btn btn-dark mb-2 w-100">Luo uusi yritys</a>
+<form class="mt-2" action="" method="get" id="searchForm">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="Etsi yrityksen nimellä" id="searchInput" name="search"
+            value="{{ request.args.get('search', '') }}">
+        <button class="btn btn-dark" type="submit">Hae</button>
+    </div>
+</form>
 <ul class="list-group">
     {% for company in companies %}
+    {% if not loop.last or companies|length == 1 %}
     <li class="list-group-item">
         <h3>{{ company.companyName }}</h3>
         <p>Y-tunnus: {{ company.businessId }}</p>
@@ -19,10 +27,34 @@
             }
         </script>
     </li>
+    {% endif %}
+    {% else %}
+    {% if request.args.get('search') %}
+    <p>Yrityksiä ei löytynyt hakuehdoilla.</p>
     {% else %}
     <p>Et ole vielä luonut yhtään yritystä.</p>
+    {% endif %}
     {% endfor %}
 </ul>
+{% if companies|length > 10 %} <button id="showMoreBtn" class="btn btn-dark mt-2 w-100" onclick="goForward()">
+    Näytä seuraava sivu</button>
+{% endif %}
+{% if request.args.get('showOffset', 0)|int > 0 %} <button id="goBackBtn" class="btn btn-dark mt-2 w-100"
+    onclick="goBack()">Palaa takaisin</button>
+{% endif %}
+
+<script>
+    function goForward() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('showOffset', {{ request.args.get('showOffset', 0) | int }} + 10);
+    window.location.href = url.toString();
+    }
+    function goBack() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('showOffset', {{ request.args.get('showOffset', 0) | int }} - 10);
+    window.location.href = url.toString();
+    }
+</script>
 {% endblock %}
 
 {% include 'reloadonback.html' %}

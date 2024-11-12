@@ -173,14 +173,20 @@ def getCompany(companyId):
     )
 
 
-def getAllGroupCompanies(groupId):
+def getAllGroupCompanies(groupId, searchString="", showOffset=0):
     """
-    Retrieve all companies associated with a specific group.
+    Retrieve all companies associated with a specific group, optionally filtered by a substring in the company name.
     """
+    getCompaniesSql = "SELECT * FROM companies WHERE groupId=:groupId"
 
-    getCompaniesSql = text("SELECT * FROM companies WHERE groupId=:groupId")
+    if searchString:
+        getCompaniesSql += r""" AND REGEXP_REPLACE(companyName, '\s', '', 'g') ILIKE REGEXP_REPLACE(:searchString, '\s', '', 'g')"""
+        searchString = f"%{searchString}%"
+
+    getCompaniesSql += " OFFSET :showOffset LIMIT 11"
+
     getCompaniesResult = db.session.execute(
-        getCompaniesSql, {"groupId": groupId})
+        text(getCompaniesSql), {"groupId": groupId, "searchString": searchString, "showOffset": showOffset} if searchString else {"groupId": groupId, "showOffset": showOffset})
     return [
         CompanyData(
             company[0],
@@ -277,20 +283,29 @@ def getAllCompanyContacts(companyId):
     ]
 
 
-def getAllGroupContacts(groupId):
+def getAllGroupContacts(groupId, searchString="", showOffset=0):
     """
     Retrieve all contacts associated with a specific group, including their company information.
     """
 
-    getContactsSql = text("""
+    getContactsSql = """
         SELECT contacts.*, companies.companyName, companies.id
         FROM contacts
         JOIN companies ON contacts.companyId = companies.id
         JOIN groups ON companies.groupId = groups.id
         WHERE groups.id = :groupId
-    """)
+    """
+
+    if searchString:
+        getContactsSql += r"""
+            AND REGEXP_REPLACE(CONCAT(contacts.firstName, ' ', contacts.lastName), '\s', '', 'g') ILIKE REGEXP_REPLACE(:searchString, '\s', '', 'g')
+        """
+        searchString = f"%{searchString}%"
+
+    getContactsSql += " OFFSET :showOffset LIMIT 11"
+
     getContactsResult = db.session.execute(
-        getContactsSql, {"groupId": groupId})
+        text(getContactsSql), {"groupId": groupId, "searchString": searchString, "showOffset": showOffset} if searchString else {"groupId": groupId, "showOffset": showOffset})
 
     return [
         CompanyContactData(

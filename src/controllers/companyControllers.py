@@ -38,19 +38,31 @@ def postUpsertCompany(companyId):
 
 def getCompanies(groupId):
     """
-    Renders the companies page with a list of companies for the given group ID.
+    Renders the filtered companies page with a list of companies for the given group ID.
     """
-
-    companies = companyServices.getAllGroupCompanies(groupId)
+    searchString = request.args.get('search', "")
+    try:
+        showOffset = int(request.args.get('showOffset', 0))
+        if showOffset < 0:
+            showOffset = 0
+    except ValueError:
+        showOffset = 0
+    companies = companyServices.getAllGroupCompanies(groupId, searchString, showOffset)
     return render_template("companies.html", companies=companies)
 
 
 def getContacts(groupId):
     """
-    Renders the contacts page with a list of contacts for the given group ID.
+    Renders the filtered contacts page with a list of contacts for the given group ID.
     """
-
-    contacts = companyServices.getAllGroupContacts(groupId)
+    searchString = request.args.get('search', "")
+    try:
+        showOffset = int(request.args.get('showOffset', 0))
+        if showOffset < 0:
+            showOffset = 0
+    except ValueError:
+        showOffset = 0
+    contacts = companyServices.getAllGroupContacts(groupId, searchString, showOffset)
     return render_template("contacts.html", contacts=contacts)
 
 

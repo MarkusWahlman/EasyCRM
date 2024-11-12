@@ -197,3 +197,21 @@ def deleteUser(userId):
         db.session.rollback()
         return False
     
+def getUserRole(userId, groupId):
+    """
+    Retrieve the role of a user in a specified group.
+    """
+    try:
+        getUserRoleSql = text("SELECT role FROM userGroups WHERE userId = :userId AND groupId = :groupId")
+        result = db.session.execute(getUserRoleSql, {"userId": userId, "groupId": groupId})
+        role = result.fetchone()
+        
+        if not role:
+            abort(404)
+            return None
+
+        return role[0]
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return None

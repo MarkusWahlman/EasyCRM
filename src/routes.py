@@ -83,7 +83,7 @@ def registerRoutes(app):
     @checkBelongsToGroup()
     def companies():
         """
-        Displays all companies belonging to the user's group.
+        Displays all filtered companies belonging to the user's group.
         """
         if request.method == "GET":
             return companyControllers.getCompanies(session.get("groupId"))
@@ -93,7 +93,7 @@ def registerRoutes(app):
     @checkBelongsToGroup()
     def contacts():
         """
-        Displays all contacts for the user's group.
+        Displays all filtered contacts for the user's group.
         """
         if request.method == "GET":
             return companyControllers.getContacts(session.get("groupId"))
