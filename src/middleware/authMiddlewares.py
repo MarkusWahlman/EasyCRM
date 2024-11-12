@@ -31,7 +31,7 @@ def checkBelongsToGroup():
 def checkEditAccess():
     """
     Decorator that checks if the user has edit access (OWNER or ADMIN role).
-    Ensures the user belongs to a group and aborts with 403 if access is denied.
+    Ensures the user has the required access and aborts with 403 if access is denied.
     """
     def decorator(f):
         @wraps(f)
@@ -40,6 +40,23 @@ def checkEditAccess():
             role = session.get("role")
             if not role or UserRoles(role) is not UserRoles.OWNER and UserRoles(
                     role) is not UserRoles.ADMIN:
+                abort(403)
+            return f(*args, **kwargs)
+        return decoratedFunction
+    return decorator
+
+
+def checkOwnerAccess():
+    """
+    Decorator that checks if the user has OWNER access.
+    Ensures the user has the required access and aborts with 403 if access is denied.
+    """
+    def decorator(f):
+        @wraps(f)
+        @checkBelongsToGroup()
+        def decoratedFunction(*args, **kwargs):
+            role = session.get("role")
+            if UserRoles(role) is not UserRoles.OWNER:
                 abort(403)
             return f(*args, **kwargs)
         return decoratedFunction
@@ -59,8 +76,10 @@ def checkAccessToCompanyIdArg():
             if not companyId:
                 return f(*args, **kwargs)
 
-            getCompanySql = text("SELECT groupId FROM companies WHERE id=:companyId")
-            getCompanyResult = db.session.execute(getCompanySql, {"companyId": companyId})
+            getCompanySql = text(
+                "SELECT groupId FROM companies WHERE id=:companyId")
+            getCompanyResult = db.session.execute(
+                getCompanySql, {"companyId": companyId})
             companyGroupIdObject = getCompanyResult.fetchone()
             if not companyGroupIdObject:
                 abort(404)
@@ -94,14 +113,51 @@ def checkAccessToCompanyAndContactIdArg():
                     role) is not UserRoles.ADMIN):
                 abort(403)
 
-            getContactSql = text("SELECT companyId FROM contacts WHERE id=:contactId")
-            getContactResult = db.session.execute(getContactSql, {"contactId": contactId})
+            getContactSql = text(
+                "SELECT companyId FROM contacts WHERE id=:contactId")
+            getContactResult = db.session.execute(
+                getContactSql, {"contactId": contactId})
             contactCompanyIdObject = getContactResult.fetchone()
             if not contactCompanyIdObject:
                 abort(404)
             contactCompanyId = contactCompanyIdObject[0]
 
             if contactCompanyId is not companyId:
+                abort(403)
+
+            return f(*args, **kwargs)
+        return decoratedFunction
+    return decorator
+
+
+def checkAccessToUserIdArg():
+    """
+    Decorator that checks if the user has access to the user specified by the userId argument.
+    Ensures the session user belongs to the same group as the userId.
+    """
+    def decorator(f):
+        @wraps(f)
+        @checkBelongsToGroup()
+        def decoratedFunction(*args, **kwargs):
+            userId = kwargs.get('userId')
+            if not userId:
+                return f(*args, **kwargs)
+
+            if userId == session.get('userId'):
+                abort(403)
+
+            getGroupSql = text(
+                "SELECT groupId FROM userGroups WHERE userId = :userId")
+            getGroupResult = db.session.execute(
+                getGroupSql, {"userId": userId})
+            userGroup = getGroupResult.fetchone()
+
+            if not userGroup:
+                abort(404)
+
+            userGroupId = userGroup[0]
+
+            if session.get("groupId") != userGroupId:
                 abort(403)
 
             return f(*args, **kwargs)

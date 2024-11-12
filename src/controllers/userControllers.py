@@ -4,10 +4,10 @@ Includes routes for logging in, registering a new user, and managing users.
 Handles form validation and error rendering for login and registration processes.
 """
 
-from flask import redirect, render_template, request
+from flask import redirect, render_template, request, url_for
 from pydantic import ValidationError
 
-from validators import LoginForm, RegisterForm, formatErrors
+from validators import UserCreateForm, LoginForm, RegisterForm, UserEditForm, formatErrors
 from services import userServices
 
 
@@ -65,8 +65,63 @@ def postRegister():
         errorMessage="Rekisteröinnissä tapahtui virhe, kokeile toista käyttäjänimeä")
 
 
-def getUserManager():
+def getUserManager(groupId):
     """
-    Renders the user management page.
+    Gets users in the group and renders the user management page.
     """
-    return render_template("usermanager.html")
+    users = userServices.getAllGroupUsers(groupId)
+    return render_template("usermanager.html", users=users)
+
+
+def getCreateUser():
+    """
+    Renders user creation page.
+    """
+    return render_template('createuser.html')
+
+
+def postCreateUser(groupId):
+    """
+    Processes the create user form data and creates a new user.
+    Renders the create user page with an error message if user creation fails.
+    """
+    try:
+        formData = UserCreateForm(**request.form.to_dict())
+    except ValidationError as e:
+        return render_template(
+            "createuser.html",
+            errorMessage=formatErrors(
+                e.errors()))
+
+    if userServices.createUser(formData.username, formData.password, formData.role, groupId):
+        return redirect(url_for('userManager'))
+
+    return render_template(
+        "createuser.html",
+        errorMessage="Käyttäjän luonnissa tapahtui virhe, kokeile toista käyttäjänimeä")
+
+
+def getEditUser(userId, errorMessage=""):
+    """
+    Renders user editing page.
+    """
+    user = userServices.getUser(userId)
+    return render_template('edituser.html', user=user, errorMessage=errorMessage)
+
+
+def postEditUser(groupId, userId):
+    """
+    Processes the edit user form data and edits a user.
+    Renders the edit user page with an error message if user editing fails.
+    """
+    try:
+        formData = UserEditForm(**request.form.to_dict())
+    except ValidationError as e:
+        return getEditUser(
+            userId,
+            errorMessage=formatErrors(
+                e.errors()))
+
+    if userServices.editUserRole(formData.role, userId, groupId):
+        return redirect(url_for('userManager'))
+    return getEditUser(userId, errorMessage="Käyttäjän muokkaamisessa tapahtui virhe")

@@ -9,6 +9,7 @@ from sqlalchemy.sql import text
 from sqlalchemy.exc import SQLAlchemyError
 from db import db
 
+
 class CompanyData:
     """
     A class representing company data.

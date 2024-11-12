@@ -18,6 +18,8 @@ app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 db.init_app(app)
 
 # Register Jinja utils
+
+
 @app.context_processor
 def addJinjaUtils():
     """

@@ -6,11 +6,13 @@ import re
 from typing import Dict, List, Optional
 from pydantic_core import ErrorDetails, PydanticCustomError
 from typing_extensions import Annotated
-from pydantic import BaseModel, StringConstraints, ValidationError, field_validator
+from pydantic import BaseModel, Field, StringConstraints, ValidationError, field_validator
 
 CUSTOM_MESSAGES = {
     'string_too_long': 'Syöttämäsi merkkijono on liian pitkä.',
     'string_too_short': 'Syöttämäsi merkkijono on liian lyhyt.',
+    'less_than_equal': 'Syöttämäsi numero on liian suuri.',
+    'greater_than_equal': 'Syöttämäsi numero on liian pieni.'
 }
 
 LOC_TRANSLATIONS = {
@@ -18,18 +20,20 @@ LOC_TRANSLATIONS = {
     'password': 'Salasana',
     'businessId': 'Y-tunnus',
     'companyName': 'Yrityksen nimi',
+    'role': 'Rooli'
 }
 
 
 def convertErrors(
-    e: ValidationError, customMessage: Dict[str, str], locTranslations: Dict[str, str]
+    e: ValidationError, customMessages: Dict[str, str], locTranslations: Dict[str, str]
 ) -> List[ErrorDetails]:
     """
     Converts error details into a user-friendly format with custom messages and translations.
     """
     newErrors: List[ErrorDetails] = []
     for error in e:
-        customMessage = customMessage.get(error['type'])
+        print(error)
+        customMessage = customMessages.get(error['type'])
         if customMessage:
             ctx = error.get('ctx')
             error['msg'] = (
@@ -52,7 +56,8 @@ def formatErrors(errorListUnformatted):
     """
     Formats a list of errors into an HTML unordered list.
     """
-    errorList = convertErrors(errorListUnformatted, CUSTOM_MESSAGES, LOC_TRANSLATIONS)
+    errorList = convertErrors(errorListUnformatted,
+                              CUSTOM_MESSAGES, LOC_TRANSLATIONS)
     errorItems = ''.join(
         f'<li class="list-group-item">{error["loc"][-1]}: {error["msg"]}</li>' for error in errorList)
     return f'<ul class="list-group">{errorItems}</ul>'
@@ -62,7 +67,8 @@ class LoginForm(BaseModel):
     """
     Pydantic model for handling the login form validation.
     """
-    username: Annotated[str, StringConstraints(strip_whitespace=True, max_length=30)]
+    username: Annotated[str, StringConstraints(
+        strip_whitespace=True, max_length=30)]
     password: Annotated[str, StringConstraints(max_length=30)]
 
 
@@ -70,7 +76,8 @@ class RegisterForm(BaseModel):
     """
     Pydantic model for handling the registration form validation.
     """
-    username: Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=30)]
+    username: Annotated[str, StringConstraints(
+        strip_whitespace=True, min_length=3, max_length=30)]
     password: Annotated[str, StringConstraints(min_length=8, max_length=30)]
 
     @field_validator('password')
@@ -94,6 +101,19 @@ class RegisterForm(BaseModel):
         return password
 
 
+class UserEditForm(BaseModel):
+    """
+    Pydantic model for handling the edit user form validation.
+    """
+    role: Annotated[int, Field(ge=2, le=3)]
+
+
+class UserCreateForm(UserEditForm, RegisterForm):
+    """
+    Combines UserEditForm and RegisterForm
+    """
+
+
 class CompanyForm(BaseModel):
     """
     Pydantic model for handling the company form validation.
@@ -101,7 +121,8 @@ class CompanyForm(BaseModel):
 
     companyName: Annotated[str, StringConstraints(
         strip_whitespace=True, min_length=3, max_length=30)]
-    businessId: Optional[Annotated[str, StringConstraints(min_length=8, max_length=9)]]
+    businessId: Optional[Annotated[str,
+                                   StringConstraints(min_length=8, max_length=9)]]
     notes: Optional[Annotated[str, StringConstraints(max_length=500)]]
     websiteUrl: Optional[Annotated[str, StringConstraints(max_length=75)]]
     email: Optional[Annotated[str, StringConstraints(max_length=75)]]

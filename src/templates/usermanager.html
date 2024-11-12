@@ -1,9 +1,33 @@
 {% extends "index.html"%}
 {% block mainContent %}
 <h2>Ryhmän käyttäjien hallinta</h2>
-<a href="{{url_for('upsertCompany')}}" class="btn btn-dark mb-2 w-100">Luo uusi käyttäjä</a>
 
-<h2>Oman tilin hallinta</h2>
+{% if users|length == 1 %}
+<p>Ryhmässäsi ei ole vielä muita käyttäjiä.</p>
+{% endif %}
+{% for user in users %}
+{% if session.username != user.username %}
+<li class="list-group-item">
+    <h3>{{ user.username }}</h3>
+    <p>Rooli:
+        {% if user.role == 1 %}
+        Omistaja
+        {% elif user.role == 2 %}
+        Admin
+        {% elif user.role == 3 %}
+        Katsoja
+        {% else %}
+        Tuntematon rooli
+        {% endif %}
+    </p>
+    <a href="{{url_for('editUser', userId=user.userId)}}" class="btn btn-dark">Päivitä käyttäjää</a>
+</li>
+{% endif %}
+
+{% endfor %}
+<a href="{{url_for('createUser')}}" class="btn btn-dark mb-2 w-100 mt-2">Luo uusi käyttäjä</a>
+
+<h2>Oman käyttäjän hallinta</h2>
 <a href="{{url_for('logout')}}" class="btn btn-dark mb-2 w-100">Kirjaudu ulos</a>
 {% endblock %}
 

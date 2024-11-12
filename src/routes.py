@@ -9,11 +9,14 @@ from flask import redirect, render_template, request, session
 from middleware.authMiddlewares import (
     checkAccessToCompanyIdArg,
     checkAccessToCompanyAndContactIdArg,
+    checkAccessToUserIdArg,
     checkBelongsToGroup,
-    checkEditAccess
+    checkEditAccess,
+    checkOwnerAccess
 )
 from controllers import companyControllers
 from controllers import userControllers
+
 
 def registerRoutes(app):
     """
@@ -41,7 +44,6 @@ def registerRoutes(app):
             return userControllers.postLogin()
         return render_template('405.html'), 405
 
-
     @app.route("/register", methods=["GET", "POST"])
     def register():
         """
@@ -53,7 +55,6 @@ def registerRoutes(app):
             return userControllers.postRegister()
         return render_template('405.html'), 405
 
-
     @app.route("/logout")
     def logout():
         """
@@ -63,7 +64,6 @@ def registerRoutes(app):
         return redirect("/")
 
     # Company routes
-
 
     @app.route("/company/create", methods=["GET", "POST"])
     @app.route("/company/edit/<int:companyId>", methods=["GET", "POST"])
@@ -79,7 +79,6 @@ def registerRoutes(app):
             return companyControllers.postUpsertCompany(companyId)
         return render_template('405.html'), 405
 
-
     @app.route("/companies", methods=["GET"])
     @checkBelongsToGroup()
     def companies():
@@ -89,7 +88,6 @@ def registerRoutes(app):
         if request.method == "GET":
             return companyControllers.getCompanies(session.get("groupId"))
         return render_template('405.html'), 405
-
 
     @app.route("/contacts", methods=["GET"])
     @checkBelongsToGroup()
@@ -101,7 +99,6 @@ def registerRoutes(app):
             return companyControllers.getContacts(session.get("groupId"))
         return render_template('405.html'), 405
 
-
     @app.route("/company/<int:companyId>", methods=["GET"])
     @checkAccessToCompanyIdArg()
     def company(companyId):
@@ -111,7 +108,6 @@ def registerRoutes(app):
         if request.method == "GET":
             return companyControllers.getCompany(companyId)
         return render_template('405.html'), 405
-
 
     @app.route("/company/<int:companyId>/contact/create", methods=["GET", "POST"])
     @app.route("/company/<int:companyId>/contact/edit/<int:contactId>", methods=["GET", "POST"])
@@ -127,7 +123,6 @@ def registerRoutes(app):
             return companyControllers.postUpsertCompanyContact(companyId, contactId)
         return render_template('405.html'), 405
 
-
     @app.route("/company/<int:companyId>/contact/<int:contactId>", methods=["GET"])
     @checkAccessToCompanyAndContactIdArg()
     def companyContact(companyId, contactId):
@@ -137,7 +132,6 @@ def registerRoutes(app):
         if request.method == "GET":
             return companyControllers.getCompanyContact(companyId, contactId)
         return render_template('405.html'), 405
-
 
     @app.route("/company/<int:companyId>/contacts", methods=["GET"])
     @checkAccessToCompanyIdArg()
@@ -149,7 +143,6 @@ def registerRoutes(app):
             return companyControllers.getCompanyContacts(companyId)
         return render_template('405.html'), 405
 
-
     @app.route("/usermanager", methods=["GET"])
     @checkBelongsToGroup()
     def userManager():
@@ -157,14 +150,34 @@ def registerRoutes(app):
         Displays the user management interface.
         """
         if request.method == "GET":
-            return userControllers.getUserManager()
+            return userControllers.getUserManager(session.get("groupId"))
+        return render_template('405.html'), 405
+
+    @app.route("/user/create", methods=["GET", "POST"])
+    @checkBelongsToGroup()
+    @checkOwnerAccess()
+    def createUser():
+        if request.method == "GET":
+            return userControllers.getCreateUser()
+        if request.method == "POST":
+            return userControllers.postCreateUser(session.get("groupId"))
+        return render_template('405.html'), 405
+
+    @app.route("/user/edit/<int:userId>", methods=["GET", "POST"])
+    @checkAccessToUserIdArg()
+    @checkOwnerAccess()
+    def editUser(userId):
+        if request.method == "GET":
+            return userControllers.getEditUser(userId)
+        if request.method == "POST":
+            return userControllers.postEditUser(session.get("groupId"), userId)
         return render_template('405.html'), 405
 
     # Custom error routes
 
-
     @app.errorhandler(404)
-    def pageNotFound():
+    # pylint: disable=unused-argument
+    def pageNotFound(*args, **kwargs):
         """
         Handles 404 errors by rendering a custom 404 error page.
         """

@@ -6,11 +6,12 @@ with role-based access control.
 
 from enum import IntEnum
 
-from flask import session
+from flask import abort, session
 from sqlalchemy.sql import text
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import check_password_hash, generate_password_hash
 from db import db
+
 
 class UserRoles(IntEnum):
     """
@@ -22,6 +23,28 @@ class UserRoles(IntEnum):
     VIEWER = 3
 
 
+class UserData:
+    """
+    A class representing user data.
+    """
+
+    def __init__(
+            self,
+            userId=None,
+            groupId=None,
+            username="",
+            role=-1):
+        self.userId = userId
+        self.groupId = groupId
+        self.username = username
+        self.role = role
+
+    userId: int
+    groupId: int
+    username: str
+    role: int
+
+
 def login(username, password):
     """
     Authenticates a user by verifying the provided username and password.
@@ -29,7 +52,9 @@ def login(username, password):
     If the credentials are correct, it sets the session variables `username`, `groupId`,
     and `role` to manage user state for the session.
     """
-    getUserSql = text("SELECT id, password FROM users WHERE username=:username")
+
+    getUserSql = text(
+        "SELECT id, password FROM users WHERE username=:username")
     getUserResult = db.session.execute(getUserSql, {"username": username})
     user = getUserResult.fetchone()
 
@@ -37,13 +62,16 @@ def login(username, password):
         return False
 
     if check_password_hash(user.password, password):
-        getUserGroupIdSql = text("SELECT groupId, role FROM userGroups WHERE userId=:userId")
-        getUserGroupIdResult = db.session.execute(getUserGroupIdSql, {"userId": user.id})
+        getUserGroupIdSql = text(
+            "SELECT groupId, role, userId FROM userGroups WHERE userId=:userId")
+        getUserGroupIdResult = db.session.execute(
+            getUserGroupIdSql, {"userId": user.id})
         group = getUserGroupIdResult.fetchone()
 
         session["username"] = username
         session["groupId"] = group[0]
         session["role"] = group[1]
+        session["userId"] = group[2]
         return True
 
     return False
@@ -63,7 +91,8 @@ def createUser(username, password, role: UserRoles = None, groupId=None):
         userId = createUserResult.fetchone()[0]
 
         if not groupId:
-            createGroupSql = text("INSERT INTO groups DEFAULT VALUES RETURNING id")
+            createGroupSql = text(
+                "INSERT INTO groups DEFAULT VALUES RETURNING id")
             createGroupResult = db.session.execute(createGroupSql)
             groupId = createGroupResult.fetchone()[0]
 
@@ -72,7 +101,26 @@ def createUser(username, password, role: UserRoles = None, groupId=None):
 
         insertUserGroupSql = text(
             "INSERT INTO userGroups (userId, groupId, role) VALUES (:userId, :groupId, :role)")
-        db.session.execute(insertUserGroupSql, {"userId": userId, "groupId": groupId, "role": role})
+        db.session.execute(insertUserGroupSql, {
+                           "userId": userId, "groupId": groupId, "role": role})
+
+        db.session.commit()
+        return True
+    except SQLAlchemyError:
+        return False
+
+
+def editUserRole(role, userId, groupId):
+    """
+    Edits a users role in a certain group.
+    """
+
+    try:
+        updateRoleSql = text(
+            "UPDATE userGroups SET role = :role WHERE userId = :userId AND groupId = :groupId"
+        )
+        db.session.execute(
+            updateRoleSql, {"role": role, "userId": userId, "groupId": groupId})
 
         db.session.commit()
         return True
@@ -89,3 +137,44 @@ def register(username, password):
     if userCreated:
         return login(username, password)
     return False
+
+
+def getAllGroupUsers(groupId):
+    """
+     Retrieve all users associated with a specific group.
+    """
+
+    getUsersByGroupIdSql = text("""
+        SELECT u.id, ug.groupId, u.username, ug.role
+        FROM users u
+        JOIN userGroups ug ON u.id = ug.userId
+        WHERE ug.groupId = :groupId
+    """)
+    getUsersByGroupIdResult = db.session.execute(
+        getUsersByGroupIdSql, {"groupId": groupId})
+    return [
+        UserData(
+            user[0],
+            user[1],
+            user[2],
+            user[3]
+        )
+        for user in getUsersByGroupIdResult.fetchall()
+    ]
+
+
+def getUser(userId):
+    """
+    Retrieve a user by its unique identifier.
+    """
+
+    getUserSql = text("SELECT id, username FROM users WHERE id=:id")
+    getUserResult = db.session.execute(getUserSql, {"id": userId})
+    user = getUserResult.fetchone()
+    if not user:
+        abort(404)
+        return None
+    return UserData(
+        userId=user[0],
+        username=user[1]
+    )
