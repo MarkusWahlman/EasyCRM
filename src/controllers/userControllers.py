@@ -125,3 +125,14 @@ def postEditUser(groupId, userId):
     if userServices.editUserRole(formData.role, userId, groupId):
         return redirect(url_for('userManager'))
     return getEditUser(userId, errorMessage="Käyttäjän muokkaamisessa tapahtui virhe")
+
+def deleteUser(userId):
+    """
+    Deletes a user with the given contactId and redirects the user to a relevant valid url
+    """
+    userServices.deleteUser(userId)
+
+    invalidReferrer = str(userId) in request.referrer
+    if request.referrer and not invalidReferrer:
+        return redirect(request.referrer)
+    return redirect(url_for('usermanager'))

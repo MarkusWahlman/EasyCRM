@@ -11,6 +11,14 @@
 <p><a href="tel:{{ company.phone }}">{{company.phone}}</a></p>
 <p><a href="https://www.google.com/maps?q={{ company.address }}" target="_blank">{{company.address}}</a></p>
 <a href="{{url_for('upsertCompany', companyId=company.id)}}" class="btn btn-dark mb-2">Päivitä yritystä</a>
+<form action="{{ url_for('deleteCompany', companyId=company.id) }}" method="POST" onsubmit="return confirmDelete()">
+    <button type="submit" class="btn btn-dark">Poista yritys</button>
+</form>
+<script>
+    function confirmDelete() {
+        return confirm("Haluatko varmasti poistaa yrityksen?");
+    }
+</script>
 
 <h2>Kontaktit</h2>
 <a href="{{url_for('upsertCompanyContact', companyId=company.id)}}" class="btn btn-dark mb-2 w-100">
@@ -26,6 +34,15 @@
             class="btn btn-dark">Tarkastele kontaktia</a>
         <a href="{{url_for('upsertCompanyContact', companyId=company.id, contactId=contact.id)}}"
             class="btn btn-dark">Päivitä kontaktia</a>
+        <form action="{{ url_for('deleteContact', companyId=company.id, contactId=contact.id) }}" method="POST"
+            onsubmit="return confirmDelete()" class="d-inline">
+            <button type="submit" class="btn btn-dark">Poista kontakti</button>
+        </form>
+        <script>
+            function confirmDelete() {
+                return confirm("Haluatko varmasti poistaa kontaktin?");
+            }
+        </script>
     </li>
     {% else %}
     <p>Et ole vielä luonut yhtään kontaktia.</p>
@@ -33,4 +50,4 @@
 </ul>
 {% endblock %}
 
-{% include 'reloadOnBack.html' %}
+{% include 'reloadonback.html' %}

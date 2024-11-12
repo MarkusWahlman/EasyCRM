@@ -304,3 +304,39 @@ def getAllGroupContacts(groupId):
         )
         for contact in getContactsResult.fetchall()
     ]
+
+def deleteCompany(companyId):
+    """
+    Delete a company by its unique identifier.
+    """
+    try:
+        deleteCompanySql = text("DELETE FROM companies WHERE id=:id")
+        deleteResult = db.session.execute(deleteCompanySql, {"id": companyId})
+        
+        if deleteResult.rowcount == 0:
+            abort(404)
+            return False
+        
+        db.session.commit()
+        return True
+    except SQLAlchemyError:
+        db.session.rollback()
+        return False
+
+def deleteContact(contactId):
+    """
+    Delete a contact by its unique identifier.
+    """
+    try:
+        deleteContactSql = text("DELETE FROM contacts WHERE id=:id")
+        deleteResult = db.session.execute(deleteContactSql, {"id": contactId})
+        
+        if deleteResult.rowcount == 0:
+            abort(404)
+            return False
+        
+        db.session.commit()
+        return True
+    except SQLAlchemyError:
+        db.session.rollback()
+        return False

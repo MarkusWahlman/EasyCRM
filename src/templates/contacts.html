@@ -12,6 +12,15 @@
             class="btn btn-dark">Tarkastele kontaktia</a>
         <a href="{{url_for('upsertCompanyContact', companyId=contact.companyId, contactId=contact.id)}}"
             class="btn btn-dark">Päivitä kontaktia</a>
+        <form action="{{ url_for('deleteContact', companyId=contact.companyId, contactId=contact.id) }}" method="POST"
+            onsubmit="return confirmDelete()" class="d-inline">
+            <button type="submit" class="btn btn-dark">Poista kontakti</button>
+        </form>
+        <script>
+            function confirmDelete() {
+                return confirm("Haluatko varmasti poistaa yrityksen?");
+            }
+        </script>
     </li>
     {% else %}
     <p>Et ole vielä luonut yhtään kontaktia. Siirry tarkastelemaan yritystä jotta voit luoda sille kontakteja.</p>
@@ -19,4 +28,4 @@
 </ul>
 {% endblock %}
 
-{% include 'reloadOnBack.html' %}
+{% include 'reloadonback.html' %}

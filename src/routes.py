@@ -108,6 +108,14 @@ def registerRoutes(app):
         if request.method == "GET":
             return companyControllers.getCompany(companyId)
         return render_template('405.html'), 405
+    
+    @app.route("/company/delete/<int:companyId>", methods=["POST"])
+    @checkEditAccess()
+    @checkAccessToCompanyIdArg()
+    def deleteCompany(companyId):
+        if request.method == "POST":
+            return companyControllers.deleteCompany(companyId)
+        return render_template('405.html'), 405
 
     @app.route("/company/<int:companyId>/contact/create", methods=["GET", "POST"])
     @app.route("/company/<int:companyId>/contact/edit/<int:contactId>", methods=["GET", "POST"])
@@ -132,6 +140,16 @@ def registerRoutes(app):
         if request.method == "GET":
             return companyControllers.getCompanyContact(companyId, contactId)
         return render_template('405.html'), 405
+
+    @app.route("/company/<int:companyId>/contact/<int:contactId>", methods=["POST"])
+    @checkEditAccess()
+    @checkAccessToCompanyAndContactIdArg()
+    # pylint: disable=unused-argument
+    def deleteContact(companyId, contactId):
+        if request.method == "POST":
+            return companyControllers.deleteContact(contactId)
+        return render_template('405.html'), 405
+
 
     @app.route("/company/<int:companyId>/contacts", methods=["GET"])
     @checkAccessToCompanyIdArg()
@@ -161,6 +179,14 @@ def registerRoutes(app):
             return userControllers.getCreateUser()
         if request.method == "POST":
             return userControllers.postCreateUser(session.get("groupId"))
+        return render_template('405.html'), 405
+    
+    @app.route("/user/delete/<int:userId>", methods=["POST"])
+    @checkAccessToUserIdArg()
+    @checkOwnerAccess()
+    def deleteUser(userId):
+        if request.method == "POST":
+            return userControllers.deleteUser(userId)
         return render_template('405.html'), 405
 
     @app.route("/user/edit/<int:userId>", methods=["GET", "POST"])

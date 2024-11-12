@@ -4,7 +4,7 @@ Provides routes for upserting companies and company contacts, viewing company an
 and rendering templates related to companies and contacts.
 """
 
-from flask import abort, redirect, render_template, request
+from flask import abort, redirect, render_template, request, url_for
 from pydantic import ValidationError
 from services import companyServices
 from validators import CompanyContactForm, CompanyForm, formatErrors
@@ -125,3 +125,25 @@ def getCompanyContacts(companyId):
         "companycontacts.html",
         contacts=contacts,
         companyId=companyId)
+
+def deleteCompany(companyId):
+    """
+    Deletes a company with the given companyId and redirects the user to a relevant valid url
+    """
+    companyServices.deleteCompany(companyId)
+
+    invalidReferrer = str(companyId) in request.referrer
+    if request.referrer and not invalidReferrer:
+        return redirect(request.referrer)
+    return redirect(url_for('companies'))
+
+def deleteContact(contactId):
+    """
+    Deletes a contact with the given contactId and redirects the user to a relevant valid url
+    """
+    companyServices.deleteContact(contactId)
+
+    invalidReferrer = str(contactId) in request.referrer
+    if request.referrer and not invalidReferrer:
+        return redirect(request.referrer)
+    return redirect(url_for('contacts'))

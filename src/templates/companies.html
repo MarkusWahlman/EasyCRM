@@ -9,6 +9,15 @@
         <p>Y-tunnus: {{ company.businessId }}</p>
         <a href=" {{url_for('company', companyId=company.id)}}" class="btn btn-dark">Tarkastele yritystä</a>
         <a href="{{url_for('upsertCompany', companyId=company.id)}}" class="btn btn-dark">Päivitä yritystä</a>
+        <form action="{{ url_for('deleteCompany', companyId=company.id) }}" method="POST"
+            onsubmit="return confirmDelete()" class="d-inline">
+            <button type="submit" class="btn btn-dark">Poista yritys</button>
+        </form>
+        <script>
+            function confirmDelete() {
+                return confirm("Haluatko varmasti poistaa yrityksen?");
+            }
+        </script>
     </li>
     {% else %}
     <p>Et ole vielä luonut yhtään yritystä.</p>
@@ -16,4 +25,4 @@
 </ul>
 {% endblock %}
 
-{% include 'reloadOnBack.html' %}
+{% include 'reloadonback.html' %}

@@ -10,4 +10,13 @@
 <a href="{{url_for('upsertCompanyContact', companyId=contact.companyId, contactId=contact.id)}}" class="btn btn-dark">
     Päivitä kontaktia
 </a>
+<form action="{{ url_for('deleteContact', companyId=contact.companyId, contactId=contact.id) }}" method="POST"
+    onsubmit="return confirmDelete()" class="d-inline">
+    <button type="submit" class="btn btn-dark">Poista kontakti</button>
+</form>
+<script>
+    function confirmDelete() {
+        return confirm("Haluatko varmasti poistaa kontaktin?");
+    }
+</script>
 {% endblock %}

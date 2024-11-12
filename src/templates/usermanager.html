@@ -21,6 +21,15 @@
         {% endif %}
     </p>
     <a href="{{url_for('editUser', userId=user.userId)}}" class="btn btn-dark">Päivitä käyttäjää</a>
+    <form action="{{ url_for('deleteUser', userId=user.userId) }}" method="POST" onsubmit="return confirmDelete()"
+        class="d-inline">
+        <button type="submit" class="btn btn-dark">Poista käyttäjä</button>
+    </form>
+    <script>
+        function confirmDelete() {
+            return confirm("Haluatko varmasti poistaa käyttäjän?");
+        }
+    </script>
 </li>
 {% endif %}
 
@@ -31,4 +40,4 @@
 <a href="{{url_for('logout')}}" class="btn btn-dark mb-2 w-100">Kirjaudu ulos</a>
 {% endblock %}
 
-{% include 'reloadOnBack.html' %}
+{% include 'reloadonback.html' %}

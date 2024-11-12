@@ -178,3 +178,22 @@ def getUser(userId):
         userId=user[0],
         username=user[1]
     )
+
+def deleteUser(userId):
+    """
+    Delete a user by its unique identifier
+    """
+    try:
+        deleteUserSql = text("DELETE FROM users WHERE id = :id")
+        deleteResult = db.session.execute(deleteUserSql, {"id": userId})
+
+        if deleteResult.rowcount == 0:
+            abort(404)
+
+        db.session.commit()
+        return True
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return False
+    
