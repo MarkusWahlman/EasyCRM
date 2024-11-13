@@ -14,7 +14,7 @@ app.secret_key = getenv("SECRET_KEY")
 registerRoutes(app)
 
 # Register db
-app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
+app.config["SQLALCHEMY_DATABASE_URI"] = getenv("POSTGRES_URL")
 db.init_app(app)
 
 # Register Jinja utils
