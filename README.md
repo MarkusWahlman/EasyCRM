@@ -16,6 +16,11 @@ EasyCRM on yrityksille suunnattu yksinkertainen asiakashallintajärjestelmä (CR
 - **Käyttäjien hallinnointi**  
   Yrityskäyttäjä voi luoda uusia käyttäjiä, joilla on joko oikeus katsella tai hallinnoida yrityksiä. Yrityskäyttäjä voi myös halutessaan poistaa nämä käyttäjät tai muokata niiden oikeuksia.
 
+## Sovellus on saatavilla Vercelissä
+
+Sovelluksen uusin versio on suoraan käytettävissä Vercel alustalla.
+Pääset käyttämään sovellusta Vercelissä [tästä](https://easy-crm-two.vercel.app)
+
 ## Kehittäjän asennusohjeet
 
 ### 1. Kloonaa projekti
@@ -36,7 +41,7 @@ SECRET_KEY=<salainen-avain>
 ```
 ### 3. Asenna riippuvuudet
 
-Projektissa käytetään poetry-riippuvuushallintatyökalua. Varmista, että olet asentanut sen onnistuneesti. Asenna tarvittavat riippuvuudet komennolla:
+Projektissa käytetään [poetry-riippuvuushallintatyökalua](https://python-poetry.org/docs/#installation). Varmista, että olet asentanut sen onnistuneesti. Asenna tarvittavat riippuvuudet komennolla:
 
 ```
 $ poetry install
