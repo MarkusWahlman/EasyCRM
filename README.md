@@ -15,3 +15,45 @@ EasyCRM on yrityksille suunnattu yksinkertainen asiakashallintajärjestelmä (CR
 
 - **Käyttäjien hallinnointi**  
   Yrityskäyttäjä voi luoda uusia käyttäjiä, joilla on joko oikeus katsella tai hallinnoida yrityksiä. Yrityskäyttäjä voi myös halutessaan poistaa nämä käyttäjät tai muokata niiden oikeuksia.
+
+## Kehittäjän asennusohjeet
+
+### 1. Kloonaa projekti
+
+Kloonaa projekti GitHubista ja siirry projektin hakemistoon:
+
+```
+$ git clone https://github.com/MarkusWahlman/EasyCRM.git
+$ cd EasyCRM
+```
+### 2. Luo .env-tiedosto
+
+Luo projektiisi .env-tiedosto ja lisää siihen seuraavat tiedot:
+
+```
+DATABASE_URL=<tietokannan-paikallinen-osoite>
+SECRET_KEY=<salainen-avain>
+```
+### 3. Asenna riippuvuudet
+
+Projektissa käytetään poetry-riippuvuushallintatyökalua. Varmista, että olet asentanut sen onnistuneesti. Asenna tarvittavat riippuvuudet komennolla:
+
+```
+$ poetry install
+```
+### 4. Määritä tietokannan skeema
+
+Määritä tietokanta skeema komennolla:
+
+```
+$ psql < schema.sql
+```
+### 5. Käynnistä sovellus
+
+Siirry poetry-virtuaaliympäristöön ja käynnistä sovellus:
+
+```
+$ poetry shell
+$ cd src/
+$ flask --debug run
+```
