@@ -10,8 +10,7 @@
 </form>
 <ul class="list-group">
     {% for contact in contacts %}
-    {% if not loop.last or contacts|length == 1 %}
-    <li class="list-group-item">
+    {% if not loop.last or contacts|length < 11 %} <li class="list-group-item">
         <h3>{{ contact.firstName }} {{ contact.lastName }}</h3>
         <p>Yritys: {{ contact.companyName }}</p>
         <p><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></p>
@@ -30,15 +29,15 @@
                 return confirm("Haluatko varmasti poistaa yrityksen?");
             }
         </script>
-    </li>
-    {% endif %}
-    {% else %}
-    {% if request.args.get('search') %}
-    <p>Kontakteja ei löytynyt hakuehdoilla.</p>
-    {% else %}
-    <p>Et ole vielä luonut yhtään kontaktia.</p>
-    {% endif %}
-    {% endfor %}
+        </li>
+        {% endif %}
+        {% else %}
+        {% if request.args.get('search') %}
+        <p>Kontakteja ei löytynyt hakuehdoilla.</p>
+        {% else %}
+        <p>Et ole vielä luonut yhtään kontaktia.</p>
+        {% endif %}
+        {% endfor %}
 </ul>
 
 {% if contacts|length > 10 %} <button id="showMoreBtn" class="btn btn-dark mt-2 w-100" onclick="goForward()">
@@ -49,6 +48,15 @@
 {% endif %}
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const contactsLength = {{ contacts| length
+    }};
+    const showOffset = {{ request.args.get('showOffset', 0) | int }};
+
+    if (contactsLength === 0 && showOffset > 0) {
+        goBack();
+    }
+    });
     function goForward() {
         const url = new URL(window.location.href);
         url.searchParams.set('showOffset', {{ request.args.get('showOffset', 0) | int }} + 10);

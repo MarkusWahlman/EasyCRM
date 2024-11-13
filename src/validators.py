@@ -87,7 +87,7 @@ class CSRFProtectedForm(BaseModel):
         return token
 
 
-class LoginForm(CSRFProtectedForm):
+class LoginForm(BaseModel):
     """
     Pydantic model for handling the login form validation.
     """
@@ -96,7 +96,7 @@ class LoginForm(CSRFProtectedForm):
     password: Annotated[str, StringConstraints(max_length=30)]
 
 
-class RegisterForm(CSRFProtectedForm):
+class RegisterForm(BaseModel):
     """
     Pydantic model for handling the registration form validation.
     """

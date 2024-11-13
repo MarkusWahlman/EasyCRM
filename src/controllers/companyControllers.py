@@ -43,8 +43,7 @@ def getCompanies(groupId):
     searchString = request.args.get('search', "")
     try:
         showOffset = int(request.args.get('showOffset', 0))
-        if showOffset < 0:
-            showOffset = 0
+        max(showOffset, 0)
     except ValueError:
         showOffset = 0
     companies = companyServices.getAllGroupCompanies(
@@ -59,8 +58,7 @@ def getContacts(groupId):
     searchString = request.args.get('search', "")
     try:
         showOffset = int(request.args.get('showOffset', 0))
-        if showOffset < 0:
-            showOffset = 0
+        max(showOffset, 0)
     except ValueError:
         showOffset = 0
     contacts = companyServices.getAllGroupContacts(

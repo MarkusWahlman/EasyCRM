@@ -180,13 +180,25 @@ def getAllGroupCompanies(groupId, searchString="", showOffset=0):
     getCompaniesSql = "SELECT * FROM companies WHERE groupId=:groupId"
 
     if searchString:
-        getCompaniesSql += r""" AND REGEXP_REPLACE(companyName, '\s', '', 'g') ILIKE REGEXP_REPLACE(:searchString, '\s', '', 'g')"""
+        getCompaniesSql += (
+            r""" AND REGEXP_REPLACE(companyName, '\s', '', 'g') """
+            r"""ILIKE REGEXP_REPLACE(:searchString, '\s', '', 'g')"""
+        )
         searchString = f"%{searchString}%"
 
     getCompaniesSql += " OFFSET :showOffset LIMIT 11"
 
     getCompaniesResult = db.session.execute(
-        text(getCompaniesSql), {"groupId": groupId, "searchString": searchString, "showOffset": showOffset} if searchString else {"groupId": groupId, "showOffset": showOffset})
+        text(getCompaniesSql),
+        {
+            "groupId": groupId,
+            "searchString": searchString,
+            "showOffset": showOffset
+        } if searchString else {
+            "groupId": groupId,
+            "showOffset": showOffset
+        }
+    )
     return [
         CompanyData(
             company[0],
@@ -305,7 +317,11 @@ def getAllGroupContacts(groupId, searchString="", showOffset=0):
     getContactsSql += " OFFSET :showOffset LIMIT 11"
 
     getContactsResult = db.session.execute(
-        text(getContactsSql), {"groupId": groupId, "searchString": searchString, "showOffset": showOffset} if searchString else {"groupId": groupId, "showOffset": showOffset})
+        text(getContactsSql), {
+            "groupId": groupId,
+            "searchString": searchString,
+            "showOffset": showOffset}
+        if searchString else {"groupId": groupId, "showOffset": showOffset})
 
     return [
         CompanyContactData(
