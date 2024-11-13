@@ -14,7 +14,11 @@ app.secret_key = getenv("SECRET_KEY")
 registerRoutes(app)
 
 # Register db
-app.config["SQLALCHEMY_DATABASE_URI"] = getenv("POSTGRES_URL")
+databaseUrl = getenv("DATABASE_URL")
+if databaseUrl:
+    databaseUrl = databaseUrl.replace('postgres://', 'postgresql://')
+
+app.config["SQLALCHEMY_DATABASE_URI"] = databaseUrl
 db.init_app(app)
 
 # Register Jinja utils
