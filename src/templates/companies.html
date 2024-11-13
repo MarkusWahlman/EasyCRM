@@ -6,6 +6,7 @@
     <div class="input-group">
         <input type="text" class="form-control" placeholder="Etsi yrityksen nimellä" id="searchInput" name="search"
             value="{{ request.args.get('search', '') }}">
+        <input type="hidden" name="csrfToken" value="{{ session.csrfToken }}">
         <button class="btn btn-dark" type="submit">Hae</button>
     </div>
 </form>
@@ -19,6 +20,7 @@
         <a href="{{url_for('upsertCompany', companyId=company.id)}}" class="btn btn-dark">Päivitä yritystä</a>
         <form action="{{ url_for('deleteCompany', companyId=company.id) }}" method="POST"
             onsubmit="return confirmDelete()" class="d-inline">
+            <input type="hidden" name="csrfToken" value="{{ session.csrfToken }}">
             <button type="submit" class="btn btn-dark">Poista yritys</button>
         </form>
         <script>

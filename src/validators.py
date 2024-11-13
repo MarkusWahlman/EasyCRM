@@ -4,6 +4,7 @@ Pydantic models for form validation.
 
 import re
 from typing import Dict, List, Optional
+from flask import abort, session
 from pydantic_core import ErrorDetails, PydanticCustomError
 from typing_extensions import Annotated
 from pydantic import BaseModel, Field, StringConstraints, ValidationError, field_validator
@@ -63,7 +64,30 @@ def formatErrors(errorListUnformatted):
     return f'<ul class="list-group">{errorItems}</ul>'
 
 
-class LoginForm(BaseModel):
+class CSRFProtectedForm(BaseModel):
+    """
+    Pydantic model for handling forms with CSRF protection.
+    """
+    csrfToken: Annotated[str, Field]
+
+    @field_validator("csrfToken")
+    # pylint: disable=no-self-argument
+    def validateCsrfToken(cls, token):
+        """
+        Validates that the CSRF token matches the session's stored token.
+        """
+
+        # replace this with actual session token
+        sessionCsrfToken = session.get("csrfToken")
+        if token != sessionCsrfToken:
+            abort(403)
+            raise PydanticCustomError(
+                'csrfToken',
+                'csrfToken on väärä')
+        return token
+
+
+class LoginForm(CSRFProtectedForm):
     """
     Pydantic model for handling the login form validation.
     """
@@ -72,7 +96,7 @@ class LoginForm(BaseModel):
     password: Annotated[str, StringConstraints(max_length=30)]
 
 
-class RegisterForm(BaseModel):
+class RegisterForm(CSRFProtectedForm):
     """
     Pydantic model for handling the registration form validation.
     """
@@ -101,7 +125,7 @@ class RegisterForm(BaseModel):
         return password
 
 
-class UserEditForm(BaseModel):
+class UserEditForm(CSRFProtectedForm):
     """
     Pydantic model for handling the edit user form validation.
     """
@@ -114,7 +138,7 @@ class UserCreateForm(UserEditForm, RegisterForm):
     """
 
 
-class CompanyForm(BaseModel):
+class CompanyForm(CSRFProtectedForm):
     """
     Pydantic model for handling the company form validation.
     """
@@ -129,7 +153,7 @@ class CompanyForm(BaseModel):
     address: Optional[Annotated[str, StringConstraints(max_length=75)]]
 
 
-class CompanyContactForm(BaseModel):
+class CompanyContactForm(CSRFProtectedForm):
     """
     Pydantic model for handling the company contact form validation.
     """

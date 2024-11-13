@@ -20,6 +20,7 @@
         <label>Puhelinnumero:</label>
         <input class="form-control" type="text" name="phone" value="{{ contact.phone }}">
     </div>
+    <input type="hidden" name="csrfToken" value="{{ session.csrfToken }}">
     <button class="btn btn-dark" type="submit">{{'Päivitä' if contactId else 'Tallenna'}}</button>
 </form>
 

@@ -5,6 +5,7 @@ with role-based access control.
 """
 
 from enum import IntEnum
+import secrets
 
 from flask import abort, session
 from sqlalchemy.sql import text
@@ -72,6 +73,7 @@ def login(username, password):
         session["groupId"] = group[0]
         session["role"] = group[1]
         session["userId"] = group[2]
+        session["csrfToken"] = secrets.token_hex(16)
         return True
 
     return False

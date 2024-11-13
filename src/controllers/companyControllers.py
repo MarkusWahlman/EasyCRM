@@ -7,7 +7,7 @@ and rendering templates related to companies and contacts.
 from flask import abort, redirect, render_template, request, url_for
 from pydantic import ValidationError
 from services import companyServices
-from validators import CompanyContactForm, CompanyForm, formatErrors
+from validators import CSRFProtectedForm, CompanyContactForm, CompanyForm, formatErrors
 
 
 def getUpsertCompany(companyId):
@@ -145,6 +145,11 @@ def deleteCompany(companyId):
     """
     Deletes a company with the given companyId and redirects the user to a relevant valid url
     """
+    try:
+        CSRFProtectedForm(**request.form.to_dict())
+    except ValidationError:
+        abort(403)
+
     companyServices.deleteCompany(companyId)
 
     invalidReferrer = str(companyId) in request.referrer
@@ -157,6 +162,11 @@ def deleteContact(contactId):
     """
     Deletes a contact with the given contactId and redirects the user to a relevant valid url
     """
+    try:
+        CSRFProtectedForm(**request.form.to_dict())
+    except ValidationError:
+        abort(403)
+
     companyServices.deleteContact(contactId)
 
     invalidReferrer = str(contactId) in request.referrer

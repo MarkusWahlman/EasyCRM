@@ -4,10 +4,10 @@ Includes routes for logging in, registering a new user, and managing users.
 Handles form validation and error rendering for login and registration processes.
 """
 
-from flask import redirect, render_template, request, url_for
+from flask import abort, redirect, render_template, request, url_for
 from pydantic import ValidationError
 
-from validators import UserCreateForm, LoginForm, RegisterForm, UserEditForm, formatErrors
+from validators import CSRFProtectedForm, UserCreateForm, LoginForm, RegisterForm, UserEditForm, formatErrors
 from services import userServices
 
 
@@ -131,6 +131,11 @@ def deleteUser(userId):
     """
     Deletes a user with the given contactId and redirects the user to a relevant valid url
     """
+    try:
+        CSRFProtectedForm(**request.form.to_dict())
+    except ValidationError:
+        abort(403)
+
     userServices.deleteUser(userId)
 
     invalidReferrer = str(userId) in request.referrer

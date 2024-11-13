@@ -33,6 +33,7 @@
         <label>Osoite:</label>
         <input class="form-control" type="text" name="address" value="{{ company.address }}">
     </div>
+    <input type="hidden" name="csrfToken" value="{{ session.csrfToken }}">
     <button class="btn btn-dark" type="submit">{{'Päivitä' if id else 'Tallenna'}}</button>
 </form>
 

@@ -23,6 +23,7 @@
     <a href="{{url_for('editUser', userId=user.userId)}}" class="btn btn-dark">Päivitä käyttäjää</a>
     <form action="{{ url_for('deleteUser', userId=user.userId) }}" method="POST" onsubmit="return confirmDelete()"
         class="d-inline">
+        <input type="hidden" name="csrfToken" value="{{ session.csrfToken }}">
         <button type="submit" class="btn btn-dark">Poista käyttäjä</button>
     </form>
     <script>
