@@ -18,7 +18,7 @@ EasyCRM on yrityksille suunnattu yksinkertainen asiakashallintajärjestelmä (CR
 
 ## Sovellus on saatavilla Vercelissä
 
-Sovelluksen uusin versio on suoraan käytettävissä Vercel alustalla.
+Sovelluksen uusin versio on suoraan käytettävissä Vercel alustalla.  
 Pääset käyttämään sovellusta Vercelissä [tästä](https://easy-crm-two.vercel.app)
 
 ## Kehittäjän asennusohjeet
