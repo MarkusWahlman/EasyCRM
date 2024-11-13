@@ -37,5 +37,19 @@
     <button class="btn btn-dark" type="submit">{{'Päivitä' if id else 'Tallenna'}}</button>
 </form>
 
+<script>
+    let pageShowCount = 0
+
+    function checkPageCount() {
+        ++pageShowCount
+        if (pageShowCount > 1) {
+            if (window.history.length > 1 && document.referrer.indexOf(window.location.host) !== -1) {
+                window.history.back();
+            }
+        }
+    }
+    window.addEventListener('pageshow', checkPageCount);
+</script>
+
 {{ errorMessage | safe }}
 {% endblock %}

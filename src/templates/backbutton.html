@@ -3,15 +3,7 @@
 <script>
     function goBack() {
         if (window.history.length > 1 && document.referrer.indexOf(window.location.host) !== -1) {
-            if (document.referrer.includes('/create')) {
-                if (window.history.length > 2) {
-                    window.history.go(-2);
-                } else {
-                    window.location.href = '{{url_for("companies")}}';
-                }
-            } else {
-                window.history.back();
-            }
+            window.history.back();
         }
         else {
             window.location.href = '{{url_for("companies")}}';
