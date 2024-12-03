@@ -13,6 +13,10 @@
         </select>
     </div>
     <input type="hidden" name="csrfToken" value="{{ session.csrfToken }}">
+    <small class="form-text pb-2">
+        Jotta hallintatoimintoja pystyy käyttämään, tulee käyttäjän kirjautua sisään uudelleen. 
+        Muutokset oikeuksissa astuvat voimaan välittömästi.
+    </small>
     <button class="btn btn-dark" type="submit">Muokkaa käyttäjää</button>
 </form>
 

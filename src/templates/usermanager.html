@@ -20,11 +20,11 @@
         Tuntematon rooli
         {% endif %}
     </p>
-    <a href="{{url_for('editUser', userId=user.userId)}}" class="btn btn-dark">Päivitä käyttäjää</a>
+    <a href="{{url_for('editUser', userId=user.userId)}}" class="btn btn-dark {{ '' if hasOwnerAccess() else 'd-none' }}">Päivitä käyttäjää</a>
     <form action="{{ url_for('deleteUser', userId=user.userId) }}" method="POST" onsubmit="return confirmDelete()"
         class="d-inline">
         <input type="hidden" name="csrfToken" value="{{ session.csrfToken }}">
-        <button type="submit" class="btn btn-dark">Poista käyttäjä</button>
+        <button type="submit" class="btn btn-dark {{ '' if hasOwnerAccess() else 'd-none' }}">Poista käyttäjä</button>
     </form>
     <script>
         function confirmDelete() {
@@ -35,7 +35,7 @@
 {% endif %}
 
 {% endfor %}
-<a href="{{url_for('createUser')}}" class="btn btn-dark mb-2 w-100 mt-2">Luo uusi käyttäjä</a>
+<a href="{{url_for('createUser')}}" class="btn btn-dark mb-2 w-100 mt-2 {{ '' if hasOwnerAccess() else 'd-none' }}">Luo uusi käyttäjä</a>
 
 <h2>Oman käyttäjän hallinta</h2>
 <a href="{{url_for('logout')}}" class="btn btn-dark mb-2 w-100">Kirjaudu ulos</a>

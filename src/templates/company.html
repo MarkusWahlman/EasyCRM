@@ -10,10 +10,10 @@
 <p><a href="mailto:{{ company.email }}">{{company.email}}</a></p>
 <p><a href="tel:{{ company.phone }}">{{company.phone}}</a></p>
 <p><a href="https://www.google.com/maps?q={{ company.address }}" target="_blank">{{company.address}}</a></p>
-<a href="{{url_for('upsertCompany', companyId=company.id)}}" class="btn btn-dark mb-2">Päivitä yritystä</a>
+<a href="{{url_for('upsertCompany', companyId=company.id)}}" class="btn btn-dark mb-2 {{ '' if hasEditAccess() else 'd-none' }}">Päivitä yritystä</a>
 <form action="{{ url_for('deleteCompany', companyId=company.id) }}" method="POST" onsubmit="return confirmDelete()">
     <input type="hidden" name="csrfToken" value="{{ session.csrfToken }}">
-    <button type="submit" class="btn btn-dark">Poista yritys</button>
+    <button type="submit" class="btn btn-dark {{ '' if hasEditAccess() else 'd-none' }}">Poista yritys</button>
 </form>
 <script>
     function confirmDelete() {
@@ -22,7 +22,7 @@
 </script>
 
 <h2>Kontaktit</h2>
-<a href="{{url_for('upsertCompanyContact', companyId=company.id)}}" class="btn btn-dark mb-2 w-100">
+<a href="{{url_for('upsertCompanyContact', companyId=company.id)}}" class="btn btn-dark mb-2 w-100 {{ '' if hasEditAccess() else 'd-none' }}">
     Luo uusi kontakti
 </a>
 <ul class="list-group">
@@ -34,11 +34,11 @@
         <a href=" {{url_for('companyContact', companyId=company.id, contactId=contact.id)}}"
             class="btn btn-dark">Tarkastele kontaktia</a>
         <a href="{{url_for('upsertCompanyContact', companyId=company.id, contactId=contact.id)}}"
-            class="btn btn-dark">Päivitä kontaktia</a>
+            class="btn btn-dark {{ '' if hasEditAccess() else 'd-none' }}">Päivitä kontaktia</a>
         <form action="{{ url_for('deleteContact', companyId=company.id, contactId=contact.id) }}" method="POST"
             onsubmit="return confirmDelete()" class="d-inline">
             <input type="hidden" name="csrfToken" value="{{ session.csrfToken }}">
-            <button type="submit" class="btn btn-dark">Poista kontakti</button>
+            <button type="submit" class="btn btn-dark {{ '' if hasEditAccess() else 'd-none' }}">Poista kontakti</button>
         </form>
         <script>
             function confirmDelete() {

@@ -7,13 +7,13 @@
 <p>{{contact.lastName}}</p>
 <p><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></p>
 <p><a href="tel:{{ contact.phone }}">{{ contact.phone }}</a></p>
-<a href="{{url_for('upsertCompanyContact', companyId=contact.companyId, contactId=contact.id)}}" class="btn btn-dark">
+<a href="{{url_for('upsertCompanyContact', companyId=contact.companyId, contactId=contact.id)}}" class="btn btn-dark {{ '' if hasEditAccess() else 'd-none' }}">
     Päivitä kontaktia
 </a>
 <form action="{{ url_for('deleteContact', companyId=contact.companyId, contactId=contact.id) }}" method="POST"
     onsubmit="return confirmDelete()" class="d-inline">
     <input type="hidden" name="csrfToken" value="{{ session.csrfToken }}">
-    <button type="submit" class="btn btn-dark">Poista kontakti</button>
+    <button type="submit" class="btn btn-dark {{ '' if hasEditAccess() else 'd-none' }}">Poista kontakti</button>
 </form>
 <script>
     function confirmDelete() {

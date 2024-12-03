@@ -120,10 +120,6 @@ def checkAccessToCompanyAndContactIdArg():
 
             role = userServices.getUserRole(userId, groupId)
 
-            if not role or (UserRoles(role) is not UserRoles.OWNER and UserRoles(
-                    role) is not UserRoles.ADMIN):
-                abort(403)
-
             getContactSql = text(
                 "SELECT companyId FROM contacts WHERE id=:contactId")
             getContactResult = db.session.execute(

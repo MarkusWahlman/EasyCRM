@@ -18,11 +18,11 @@
         <a href=" {{url_for('companyContact', companyId=contact.companyId, contactId=contact.id)}}"
             class="btn btn-dark">Tarkastele kontaktia</a>
         <a href="{{url_for('upsertCompanyContact', companyId=contact.companyId, contactId=contact.id)}}"
-            class="btn btn-dark">Päivitä kontaktia</a>
+            class="btn btn-dark {{ '' if hasEditAccess() else 'd-none' }}">Päivitä kontaktia</a>
         <form action="{{ url_for('deleteContact', companyId=contact.companyId, contactId=contact.id) }}" method="POST"
             onsubmit="return confirmDelete()" class="d-inline">
             <input type="hidden" name="csrfToken" value="{{ session.csrfToken }}">
-            <button type="submit" class="btn btn-dark">Poista kontakti</button>
+            <button type="submit" class="btn btn-dark {{ '' if hasEditAccess() else 'd-none' }}">Poista kontakti</button>
         </form>
         <script>
             function confirmDelete() {
