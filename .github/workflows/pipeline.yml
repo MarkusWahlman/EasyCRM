@@ -29,7 +29,7 @@ jobs:
         run: poetry install --no-interaction --no-root
 
       - name: Run lint
-        run: poetry run pylint app
+        run: poetry run pylint src
 
       - name: Deloy to Vercel
         if: ${{ github.event_name == 'push' }}
