@@ -1,0 +1,65 @@
+name: Deploy EasyCRM to Vercel
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+
+      - name: Run lint
+        run: poetry run pylint app
+
+      - name: Deloy to Vercel
+        if: ${{ github.event_name == 'push' }}
+        run: curl ${{ secrets.VERCEL_DEPLOY_HOOK }}
+
+
+      - name: Discord success notification
+        if: success() && github.event_name == 'push'
+        uses: rjstone/discord-webhook-notify@v2
+        with:
+          severity: info
+          username: GitHub
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          description: |
+            A new version of **EasyCRM** deployed  
+            to production
+            by **${{ github.actor }}**
+          footer: "Severity: Informational"
+          text: "Deployment successful"
+
+      - name: Discord failure notification
+        if: failure()
+        uses: rjstone/discord-webhook-notify@v2
+        with:
+          severity: error
+          username: GitHub
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          description: |
+            Build failed
+            Commit: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})  
+            by **${{ github.actor }}** broke the build :(
+          footer: "Severity: Error"
+          text: "Build failed"
