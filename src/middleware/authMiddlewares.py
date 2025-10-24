@@ -115,11 +115,6 @@ def checkAccessToCompanyAndContactIdArg():
             if not contactId:
                 return f(*args, **kwargs)
 
-            userId = session.get("userId")
-            groupId = session.get("groupId")
-
-            role = userServices.getUserRole(userId, groupId)
-
             getContactSql = text(
                 "SELECT companyId FROM contacts WHERE id=:contactId")
             getContactResult = db.session.execute(

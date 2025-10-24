@@ -1,0 +1,34 @@
+name: Health Check
+
+on:
+  # Scheduled job disabled
+  # schedule:
+  #   - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  health_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check application health
+        uses: Jtalk/url-health-check-action@v4
+        with:
+          url: https://easy-crm-two.vercel.app
+          follow-redirect: true
+          max-attempts: 3
+          retry-delay: 5s
+          retry-all: true
+
+      - name: Discord failure notification
+        if: failure()
+        uses: rjstone/discord-webhook-notify@v2
+        with:
+          severity: error
+          username: HealthCheck
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          description: |
+            **Health check failed!**  
+            The production app may be down:  
+            https://easy-crm-two.vercel.app
+          footer: "Severity: Error"
+          text: "Health check failed"
